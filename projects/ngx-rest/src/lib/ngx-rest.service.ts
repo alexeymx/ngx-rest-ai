@@ -150,6 +150,7 @@ export class RestClientService {
         throw new Error('Invalid Token Storage method');
     }
   }
+
   /**
    * Request an Authorization token
    * The default authorization URI is '[API_END_POINT]/authorize'
