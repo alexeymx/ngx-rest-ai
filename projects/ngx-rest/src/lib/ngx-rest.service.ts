@@ -160,7 +160,7 @@ export class RestClientService {
     return this.post(this.config.authUri, { username, password })
       .pipe(
         tap(payload => {
-          this.token = payload.token;
+          this.token = payload;
         })
       );
   }
