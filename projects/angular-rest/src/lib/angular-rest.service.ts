@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie';
-import { Observable, Subject, throwError } from 'rxjs';
+import { Observable, Subject, throwError, of } from 'rxjs';
 import { takeUntil, tap, catchError, delay } from 'rxjs/operators';
 import { isAfter, fromUnixTime } from 'date-fns';
 
@@ -10,6 +10,7 @@ import { IHttpOptions } from './http-options.interface';
 import { HttpMethod } from './http-method.enum';
 import { JwtHelper } from './jwt-helper.class';
 import { RestServiceConfig, TypeTokenStorage } from './angular-rest.config';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
@@ -36,9 +37,16 @@ export class RestClientService {
   /** Holds a list of files to be upload on request */
   protected withFilesRequest = false;
 
+  /** Prefer cache */
+  protected cachedRequest = false;
+
+  /** Invalidate cache */
+  protected invalidateCache = false;
+
   constructor(
     private http: HttpClient,
     private cookies: CookieService,
+    private cache: CacheService,
     private readonly router: Router,
     @Optional() config: RestServiceConfig
   ) {
@@ -182,6 +190,14 @@ export class RestClientService {
   /** Cancel all pending requests */
   public cancelPendingRequests(): void {
     this.cancelPending$.next(true);
+  }
+
+
+  public cached(invalidate = false) {
+    this.cachedRequest = true;
+    this.invalidateCache = invalidate;
+
+    return this;
   }
 
 
@@ -341,6 +357,20 @@ export class RestClientService {
 
     if (this.withFilesRequest) { data = this.createFormData(data); this.withFilesRequest = false; }
 
+    let cacheKey = '';
+    if (this.cachedRequest) {
+      cacheKey = btoa(unescape(encodeURIComponent(method + '_' + url + '_' + (method === HttpMethod.Get ? JSON.stringify(data) : ''))));
+      if (!this.invalidateCache) {
+        const cached = this.cache.get(cacheKey);
+        if (cached) {
+          this.cachedRequest = false;
+          return of(cached);
+        }
+      } else {
+        this.cache.invalidate(cacheKey);
+      }
+    }
+
     const options = {
       body: method === HttpMethod.Get ? {} : data,
       responseType: rType,
@@ -355,6 +385,13 @@ export class RestClientService {
       )
       .pipe(takeUntil(this.cancelPending$))
       .pipe(delay(this.config.mockData ? msDelay : 0))
+      .pipe(tap((resp: any) => {
+        if (this.cachedRequest) {
+          this.cachedRequest = false;
+          this.cache.set(cacheKey, resp);
+        }
+      }
+      ))
       .pipe(catchError((err) => {
         if (
           this.config.UnauthorizedRedirectUri
