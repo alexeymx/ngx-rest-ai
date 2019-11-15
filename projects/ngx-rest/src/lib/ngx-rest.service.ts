@@ -9,7 +9,7 @@ import { isAfter, fromUnixTime } from 'date-fns';
 import { IHttpOptions } from './http-options.interface';
 import { HttpMethod } from './http-method.enum';
 import { JwtHelper } from './jwt-helper.class';
-import { RestServiceConfig, TypeTokenStorage } from './angular-rest.config';
+import { RestServiceConfig, TypeTokenStorage } from './ngx-rest.config';
 import { CacheService } from './cache.service';
 
 @Injectable({

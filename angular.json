@@ -3,33 +3,33 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-rest": {
+    "ngx-rest": {
       "projectType": "library",
-      "root": "projects/angular-rest",
-      "sourceRoot": "projects/angular-rest/src",
+      "root": "projects/ngx-rest",
+      "sourceRoot": "projects/ngx-rest/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/angular-rest/tsconfig.lib.json",
-            "project": "projects/angular-rest/ng-package.json"
+            "tsConfig": "projects/ngx-rest/tsconfig.lib.json",
+            "project": "projects/ngx-rest/ng-package.json"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/angular-rest/src/test.ts",
-            "tsConfig": "projects/angular-rest/tsconfig.spec.json",
-            "karmaConfig": "projects/angular-rest/karma.conf.js"
+            "main": "projects/ngx-rest/src/test.ts",
+            "tsConfig": "projects/ngx-rest/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-rest/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/angular-rest/tsconfig.lib.json",
-              "projects/angular-rest/tsconfig.spec.json"
+              "projects/ngx-rest/tsconfig.lib.json",
+              "projects/ngx-rest/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -38,5 +38,5 @@
         }
       }
     }},
-  "defaultProject": "angular-rest"
+  "defaultProject": "ngx-rest"
 }

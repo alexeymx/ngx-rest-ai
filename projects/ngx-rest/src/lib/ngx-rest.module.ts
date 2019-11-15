@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CookieModule, CookieService } from 'ngx-cookie';
 
-import { RestServiceConfig } from './angular-rest.config';
+import { RestServiceConfig } from './ngx-rest.config';
 import { FileDownload } from './file-download.service';
 import { FileUpload } from './file-upload.service';
 
@@ -20,10 +20,10 @@ import { FileUpload } from './file-upload.service';
     RouterModule
   ]
 })
-export class AngularRestModule {
+export class NgxRestModule {
   public static forRoot(config?: RestServiceConfig): ModuleWithProviders {
     return {
-      ngModule: AngularRestModule,
+      ngModule: NgxRestModule,
       providers: [
         { provide: RestServiceConfig, useValue: config }
       ]

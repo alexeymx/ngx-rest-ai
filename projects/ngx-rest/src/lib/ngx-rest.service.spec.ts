@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CookieModule, CookieService } from 'ngx-cookie';
 
-import { RestClientService } from './angular-rest.service';
+import { RestClientService } from './ngx-rest.service';
 
 describe('RestClientService', () => {
   beforeEach(() => TestBed.configureTestingModule({

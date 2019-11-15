@@ -1,6 +1,6 @@
 {
   "name": "ngx-rest",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "scripts": {
     "start": "ng serve",
     "build": "ng build",
@@ -9,15 +9,15 @@
     "e2e": "ng e2e"
   },
   "sideEffects": false,
-  "main": "dist/angular-rest/bundles/angular-rest.umd.js",
-  "module": "dist/angular-rest/fesm5/angular-rest.js",
-  "es2015": "dist/angular-rest/fesm2015/angular-rest.js",
-  "esm5": "dist/angular-rest/esm5/angular-rest.js",
-  "esm2015": "dist/angular-rest/esm2015/angular-rest.js",
-  "fesm5": "dist/angular-rest/fesm5/angular-rest.js",
-  "fesm2015": "dist/angular-rest/fesm2015/angular-rest.js",
-  "typings": "dist/angular-rest/angular-rest.d.ts",
-  "metadata": "dist/angular-rest/angular-rest.metadata.json",
+  "main": "dist/ngx-rest/bundles/ngx-rest.umd.js",
+  "module": "dist/ngx-rest/fesm5/ngx-rest.js",
+  "es2015": "dist/ngx-rest/fesm2015/ngx-rest.js",
+  "esm5": "dist/ngx-rest/esm5/ngx-rest.js",
+  "esm2015": "dist/ngx-rest/esm2015/ngx-rest.js",
+  "fesm5": "dist/ngx-rest/fesm5/ngx-rest.js",
+  "fesm2015": "dist/ngx-rest/fesm2015/ngx-rest.js",
+  "typings": "dist/ngx-rest/ngx-rest.d.ts",
+  "metadata": "dist/ngx-rest/ngx-rest.metadata.json",
   "dependencies": {
     "@angular/animations": "~8.0.1",
     "@angular/common": "~8.0.1",

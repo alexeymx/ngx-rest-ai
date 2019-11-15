@@ -20,11 +20,11 @@
       "dom"
     ],
     "paths": {
-      "angular-rest": [
-        "dist/angular-rest"
+      "ngx-rest": [
+        "dist/ngx-rest"
       ],
-      "angular-rest/*": [
-        "dist/angular-rest/*"
+      "ngx-rest/*": [
+        "dist/ngx-rest/*"
       ]
     }
   }
