@@ -18,6 +18,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "angular-rest": [
+        "dist/angular-rest"
+      ],
+      "angular-rest/*": [
+        "dist/angular-rest/*"
+      ]
+    }
   }
 }
