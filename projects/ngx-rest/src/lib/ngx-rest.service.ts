@@ -308,7 +308,7 @@ export class RestClientService {
 
 
   protected buildUrl(url: string): string {
-    const endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+    const endPoint = this.config.mockData ? 'assets/mock-data' : this.config.endPoint.replace(/\/$/, '');
 
     let nUrl = `${endPoint}/${url.replace(/^\//g, '')}`;
     const match = nUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);

@@ -1372,7 +1372,7 @@
          */
         function (url) {
             /** @type {?} */
-            var endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+            var endPoint = this.config.mockData ? 'assets/mock-data' : this.config.endPoint.replace(/\/$/, '');
             /** @type {?} */
             var nUrl = endPoint + "/" + url.replace(/^\//g, '');
             /** @type {?} */

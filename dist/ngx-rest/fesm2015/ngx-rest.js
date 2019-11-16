@@ -842,7 +842,7 @@ class RestClientService {
      */
     buildUrl(url) {
         /** @type {?} */
-        const endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+        const endPoint = this.config.mockData ? 'assets/mock-data' : this.config.endPoint.replace(/\/$/, '');
         /** @type {?} */
         let nUrl = `${endPoint}/${url.replace(/^\//g, '')}`;
         /** @type {?} */
