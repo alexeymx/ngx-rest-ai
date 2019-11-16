@@ -1061,7 +1061,7 @@
              * @return {?}
              */
             function (payload) {
-                _this.token = payload.token;
+                _this.token = payload;
             })));
         };
         /** Validate the Authentication token against the API */
@@ -1372,7 +1372,9 @@
          */
         function (url) {
             /** @type {?} */
-            var nUrl = this.config.endPoint.replace(/\/$/, '') + "/" + url.replace(/^\//g, '');
+            var endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+            /** @type {?} */
+            var nUrl = endPoint + "/" + url.replace(/^\//g, '');
             /** @type {?} */
             var match = nUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
             if (this.config.mockData && match == null) {

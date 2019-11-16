@@ -672,7 +672,7 @@ class RestClientService {
          * @return {?}
          */
         payload => {
-            this.token = payload.token;
+            this.token = payload;
         })));
     }
     /**
@@ -842,7 +842,9 @@ class RestClientService {
      */
     buildUrl(url) {
         /** @type {?} */
-        let nUrl = `${this.config.endPoint.replace(/\/$/, '')}/${url.replace(/^\//g, '')}`;
+        const endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+        /** @type {?} */
+        let nUrl = `${endPoint}/${url.replace(/^\//g, '')}`;
         /** @type {?} */
         const match = nUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
         if (this.config.mockData && match == null) {
@@ -927,7 +929,7 @@ class RestClientService {
          * @param {?} resp
          * @return {?}
          */
-        (resp) => {
+        resp => {
             if (this.cachedRequest) {
                 this.cachedRequest = false;
                 this.cache.set(cacheKey, resp);
