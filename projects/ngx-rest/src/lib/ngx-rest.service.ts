@@ -308,7 +308,9 @@ export class RestClientService {
 
 
   protected buildUrl(url: string): string {
-    let nUrl = `${this.config.endPoint.replace(/\/$/, '')}/${url.replace(/^\//g, '')}`;
+    const endPoint = this.config.mockData ? 'assets/mock-data/' : this.config.endPoint.replace(/\/$/, '');
+
+    let nUrl = `${endPoint}/${url.replace(/^\//g, '')}`;
     const match = nUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
 
     if (this.config.mockData && match == null) {
@@ -386,7 +388,7 @@ export class RestClientService {
       )
       .pipe(takeUntil(this.cancelPending$))
       .pipe(delay(this.config.mockData ? msDelay : 0))
-      .pipe(tap((resp: any) => {
+      .pipe(tap(resp => {
         if (this.cachedRequest) {
           this.cachedRequest = false;
           this.cache.set(cacheKey, resp);
