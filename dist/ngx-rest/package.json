@@ -1,0 +1,23 @@
+{
+  "name": "ngx-rest",
+  "version": "1.2.3",
+  "peerDependencies": {
+    "@angular/common": "^8.2.0",
+    "@angular/core": "^8.2.0",
+    "ngx-cookie": "^4.1.2",
+    "date-fns": "^2.7.0"
+  },
+  "main": "bundles/ngx-rest.umd.js",
+  "module": "fesm5/ngx-rest.js",
+  "es2015": "fesm2015/ngx-rest.js",
+  "esm5": "esm5/ngx-rest.js",
+  "esm2015": "esm2015/ngx-rest.js",
+  "fesm5": "fesm5/ngx-rest.js",
+  "fesm2015": "fesm2015/ngx-rest.js",
+  "typings": "ngx-rest.d.ts",
+  "metadata": "ngx-rest.metadata.json",
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.9.0"
+  }
+}

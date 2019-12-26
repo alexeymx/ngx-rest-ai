@@ -2,8 +2,8 @@
   "name": "ngx-rest",
   "version": "1.2.3",
   "peerDependencies": {
-    "@angular/common": "^8.0.3",
-    "@angular/core": "^8.0.3",
+    "@angular/common": "^8.2.0",
+    "@angular/core": "^8.2.0",
     "ngx-cookie": "^4.1.2",
     "date-fns": "^2.7.0"
   }
