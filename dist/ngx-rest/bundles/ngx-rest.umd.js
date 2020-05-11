@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common/http'), require('rxjs/operators'), require('util'), require('@angular/router'), require('ngx-cookie'), require('rxjs'), require('date-fns')) :
-    typeof define === 'function' && define.amd ? define('ngx-rest', ['exports', '@angular/core', '@angular/common/http', 'rxjs/operators', 'util', '@angular/router', 'ngx-cookie', 'rxjs', 'date-fns'], factory) :
-    (global = global || self, factory(global['ngx-rest'] = {}, global.ng.core, global.ng.common.http, global.rxjs.operators, global.util, global.ng.router, global.ngxCookie, global.rxjs, global.dateFns));
-}(this, (function (exports, core, http, operators, util, router, ngxCookie, rxjs, dateFns) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common/http'), require('rxjs/operators'), require('util'), require('rxjs'), require('date-fns'), require('ngx-cookie'), require('@angular/router')) :
+    typeof define === 'function' && define.amd ? define('ngx-rest', ['exports', '@angular/core', '@angular/common/http', 'rxjs/operators', 'util', 'rxjs', 'date-fns', 'ngx-cookie', '@angular/router'], factory) :
+    (global = global || self, factory(global['ngx-rest'] = {}, global.ng.core, global.ng.common.http, global.rxjs.operators, global.util, global.rxjs, global.dateFns, global.ngxCookie, global.ng.router));
+}(this, (function (exports, core, http, operators, util, rxjs, dateFns, ngxCookie, router) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -202,28 +202,14 @@
     }
 
     /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     * FileUpload request state enum
      */
-    /**
-     * FileUpload request options structure
-     * @record
-     */
-    function IUploadOptions() { }
-    if (false) {
-        /** @type {?|undefined} */
-        IUploadOptions.prototype.listParameterName;
-        /** @type {?|undefined} */
-        IUploadOptions.prototype.params;
-        /** @type {?|undefined} */
-        IUploadOptions.prototype.headers;
-    }
-    /** @enum {string} */
-    var FileUploadState = {
-        initialize: 'initialize',
-        inProgress: 'inProgress',
-        completed: 'completed',
-    };
+
+    (function (FileUploadState) {
+        FileUploadState["initialize"] = "initialize";
+        FileUploadState["inProgress"] = "inProgress";
+        FileUploadState["completed"] = "completed";
+    })(exports.FileUploadState || (exports.FileUploadState = {}));
     var FileUpload = /** @class */ (function () {
         /**
          * Service class constructor
@@ -234,71 +220,27 @@
         /**
          * Convert bytes size to human readable format
          */
-        /**
-         * Convert bytes size to human readable format
-         * @param {?} bytes
-         * @return {?}
-         */
-        FileUpload.humanReadableFormat = /**
-         * Convert bytes size to human readable format
-         * @param {?} bytes
-         * @return {?}
-         */
-        function (bytes) {
-            /** @type {?} */
+        FileUpload.humanReadableFormat = function (bytes) {
             var e = (Math.log(bytes) / Math.log(1e3)) | 0;
             return +(bytes / Math.pow(1e3, e)).toFixed(2) + ' ' + ('kMGTPEZY'[e - 1] || '') + 'B';
         };
         /**
          * Convert bytes size to human readable format
          */
-        /**
-         * Convert bytes size to human readable format
-         * @param {?} files
-         * @return {?}
-         */
-        FileUpload.calculateSize = /**
-         * Convert bytes size to human readable format
-         * @param {?} files
-         * @return {?}
-         */
-        function (files) {
-            /** @type {?} */
+        FileUpload.calculateSize = function (files) {
             var size = 0;
-            Array.from(files).forEach((/**
-             * @param {?} file
-             * @return {?}
-             */
-            function (file) { size += file.size; }));
+            Array.from(files).forEach(function (file) { size += file.size; });
             return size;
         };
         /**
          * Create a FormData object to be send as request payload data
          */
-        /**
-         * Create a FormData object to be send as request payload data
-         * @protected
-         * @param {?} object
-         * @param {?=} form
-         * @param {?=} namespace
-         * @return {?}
-         */
-        FileUpload.prototype.createFormData = /**
-         * Create a FormData object to be send as request payload data
-         * @protected
-         * @param {?} object
-         * @param {?=} form
-         * @param {?=} namespace
-         * @return {?}
-         */
-        function (object, form, namespace) {
-            /** @type {?} */
+        FileUpload.prototype.createFormData = function (object, form, namespace) {
             var formData = form || new FormData();
             for (var property in object) {
                 if (!object.hasOwnProperty(property) || !object[property]) {
                     continue;
                 }
-                /** @type {?} */
                 var formKey = namespace ? namespace + "[" + property + "]" : property;
                 if (object[property] instanceof Date) {
                     formData.append(formKey, object[property].toISOString());
@@ -320,146 +262,68 @@
         /**
          * Upload the file list
          */
-        /**
-         * Upload the file list
-         * @private
-         * @param {?} method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        FileUpload.prototype.upload = /**
-         * Upload the file list
-         * @private
-         * @param {?} method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        function (method, url, files, options) {
+        FileUpload.prototype.upload = function (method, url, files, options) {
             method = method.toLowerCase();
             if (['post', 'put'].indexOf(method) === -1) {
                 throw new Error("FileUpload: Method \"" + method + "\" not allow, use \"POST\" or \"PUT\"");
             }
-            /** @type {?} */
             var result = { state: null, files: files, total: 0, loaded: 0, progress: 0 };
-            /** @type {?} */
             var Params = {};
             Params[options.listParameterName ? options.listParameterName : 'files'] = files;
-            /** @type {?} */
-            var res = new http.HttpRequest(method, url, this.createFormData(options.params ? __assign({}, Params, options.params) : Params), { reportProgress: true, headers: new http.HttpHeaders(options.headers ? options.headers : {}) });
+            var res = new http.HttpRequest(method, url, this.createFormData(options.params ? __assign(__assign({}, Params), options.params) : Params), { reportProgress: true, headers: new http.HttpHeaders(options.headers ? options.headers : {}) });
             return this.http
                 .request(res)
-                .pipe(operators.map((/**
-             * @param {?} event
-             * @return {?}
-             */
-            function (event) {
+                .pipe(operators.map(function (event) {
                 switch (event.type) {
                     case http.HttpEventType.Sent:
-                        result = __assign({}, result, { state: FileUploadState.initialize });
+                        result = __assign(__assign({}, result), { state: exports.FileUploadState.initialize });
                         break;
                     case http.HttpEventType.UploadProgress:
-                        result = __assign({}, result, {
-                            state: event.total !== event.loaded ? FileUploadState.inProgress : FileUploadState.completed,
+                        result = __assign(__assign({}, result), {
+                            state: event.total !== event.loaded ? exports.FileUploadState.inProgress : exports.FileUploadState.completed,
                             total: event.total,
                             loaded: event.loaded,
                             progress: Math.round(100 * event.loaded / event.total)
                         });
                         break;
                     case http.HttpEventType.Response:
-                        if (result.state !== FileUploadState.completed) {
-                            result = __assign({}, result, { state: FileUploadState.completed });
+                        if (result.state !== exports.FileUploadState.completed) {
+                            result = __assign(__assign({}, result), { state: exports.FileUploadState.completed });
                         }
                         break;
                 }
                 return result;
-            })), operators.filter((/**
-             * @param {?} val
-             * @return {?}
-             */
-            function (val) { return !util.isNullOrUndefined(val); })), operators.distinctUntilChanged());
+            }), operators.filter(function (val) { return !util.isNullOrUndefined(val); }), operators.distinctUntilChanged());
         };
         /**
          * Upload the files using POST HTTP method
          */
-        /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        FileUpload.prototype.post = /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        function (url, files, options) {
+        FileUpload.prototype.post = function (url, files, options) {
             return this.upload('post', url, files, options);
         };
         /**
          * Upload the files using PUT HTTP method
          */
-        /**
-         * Upload the files using PUT HTTP method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        FileUpload.prototype.put = /**
-         * Upload the files using PUT HTTP method
-         * @param {?} url
-         * @param {?} files
-         * @param {?=} options
-         * @return {?}
-         */
-        function (url, files, options) {
+        FileUpload.prototype.put = function (url, files, options) {
             return this.upload('put', url, files, options);
         };
-        FileUpload.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        FileUpload.ctorParameters = function () { return [
-            { type: http.HttpClient }
-        ]; };
+        /** @nocollapse */ FileUpload.ɵfac = function FileUpload_Factory(t) { return new (t || FileUpload)(core.ɵɵinject(http.HttpClient)); };
+        /** @nocollapse */ FileUpload.ɵprov = core.ɵɵdefineInjectable({ token: FileUpload, factory: FileUpload.ɵfac });
         return FileUpload;
     }());
-    if (false) {
-        /**
-         * @type {?}
-         * @private
-         */
-        FileUpload.prototype.http;
-    }
+    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(FileUpload, [{
+            type: core.Injectable
+        }], function () { return [{ type: http.HttpClient }]; }, null); })();
 
     /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
+     * FileDownload request state enum
      */
-    /**
-     * FileDownload request options structure
-     * @record
-     */
-    function IDownloadOptions() { }
-    if (false) {
-        /** @type {?|undefined} */
-        IDownloadOptions.prototype.params;
-        /** @type {?|undefined} */
-        IDownloadOptions.prototype.headers;
-    }
-    /** @enum {string} */
-    var FileDownloadState = {
-        initialize: 'initialize',
-        inProgress: 'inProgress',
-        completed: 'completed',
-    };
+
+    (function (FileDownloadState) {
+        FileDownloadState["initialize"] = "initialize";
+        FileDownloadState["inProgress"] = "inProgress";
+        FileDownloadState["completed"] = "completed";
+    })(exports.FileDownloadState || (exports.FileDownloadState = {}));
     var FileDownload = /** @class */ (function () {
         /**
          * Service class constructor
@@ -470,118 +334,58 @@
         /**
          * Convert bytes size to human readable format
          */
-        /**
-         * Convert bytes size to human readable format
-         * @param {?} bytes
-         * @return {?}
-         */
-        FileDownload.humanReadableFormat = /**
-         * Convert bytes size to human readable format
-         * @param {?} bytes
-         * @return {?}
-         */
-        function (bytes) {
-            /** @type {?} */
+        FileDownload.humanReadableFormat = function (bytes) {
             var e = (Math.log(bytes) / Math.log(1e3)) | 0;
             return +(bytes / Math.pow(1e3, e)).toFixed(2) + ' ' + ('kMGTPEZY'[e - 1] || '') + 'B';
         };
         /**
          * Save the Blob data
          */
-        /**
-         * Save the Blob data
-         * @param {?} saveAs
-         * @param {?} data
-         * @return {?}
-         */
-        FileDownload.blobSave = /**
-         * Save the Blob data
-         * @param {?} saveAs
-         * @param {?} data
-         * @return {?}
-         */
-        function (saveAs, data) {
+        FileDownload.blobSave = function (saveAs, data) {
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                 window.navigator.msSaveOrOpenBlob(data, saveAs);
             }
             else {
-                /** @type {?} */
-                var url_1 = window.URL.createObjectURL(data);
-                /** @type {?} */
-                var a_1 = document.createElement('a');
+                var url_1 = window.URL.createObjectURL(data), a_1 = document.createElement('a');
                 document.body.appendChild(a_1);
                 a_1.setAttribute('style', 'display: none');
                 a_1.href = url_1;
                 a_1.download = saveAs;
                 a_1.click();
-                setTimeout((/**
-                 * @return {?}
-                 */
-                function () { window.URL.revokeObjectURL(url_1); document.body.removeChild(a_1); }), 400);
+                setTimeout(function () { window.URL.revokeObjectURL(url_1); document.body.removeChild(a_1); }, 400);
             }
         };
         /**
          * Request the file to be downloaded
          */
-        /**
-         * Request the file to be downloaded
-         * @private
-         * @param {?} method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        FileDownload.prototype.download = /**
-         * Request the file to be downloaded
-         * @private
-         * @param {?} method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        function (method, url, saveAs, options) {
+        FileDownload.prototype.download = function (method, url, saveAs, options) {
             if (options === void 0) { options = {}; }
             method = method.toLowerCase();
             if (['get', 'post', 'put'].indexOf(method) === -1) {
                 throw new Error("FileDownload: Method \"" + method + "\" not allow, use \"GET\", \"POST\" or \"PUT\"");
             }
-            /** @type {?} */
-            var result = { state: null, saveAs: saveAs, total: 0, loaded: 0, progress: 0 };
-            /** @type {?} */
-            var Params = new http.HttpParams();
-            /** @type {?} */
+            var result = { state: null, saveAs: saveAs, total: 0, loaded: 0, progress: 0 }, Params = new http.HttpParams();
             var Options = {
                 reportProgress: true,
                 headers: new http.HttpHeaders(options.headers || {})
             };
             if (options.params) {
-                Object.keys(options.params).forEach((/**
-                 * @param {?} key
-                 * @return {?}
-                 */
-                function (key) { Params = Params.set(key, options.params[key]); }));
+                Object.keys(options.params).forEach(function (key) { Params = Params.set(key, options.params[key]); });
             }
-            /** @type {?} */
             var res = method === 'GET'
-                ? new http.HttpRequest(method, url, __assign({}, Options, { responseType: 'blob', params: Params }))
-                : new http.HttpRequest(method, url, options.params || {}, __assign({}, Options, { responseType: 'blob' }));
+                ? new http.HttpRequest(method, url, __assign(__assign({}, Options), { responseType: 'blob', params: Params }))
+                : new http.HttpRequest(method, url, options.params || {}, __assign(__assign({}, Options), { responseType: 'blob' }));
             return this.http
                 .request(res)
-                .pipe(operators.map((/**
-             * @param {?} event
-             * @return {?}
-             */
-            function (event) {
+                .pipe(operators.map(function (event) {
                 switch (event.type) {
                     case http.HttpEventType.Sent:
-                        result = __assign({}, result, { state: FileDownloadState.initialize });
+                        result = __assign(__assign({}, result), { state: exports.FileDownloadState.initialize });
                         break;
                     case http.HttpEventType.DownloadProgress:
                         if (!util.isUndefined(event.total)) {
-                            result = __assign({}, result, {
-                                state: FileDownloadState.inProgress,
+                            result = __assign(__assign({}, result), {
+                                state: exports.FileDownloadState.inProgress,
                                 total: event.total,
                                 loaded: event.loaded,
                                 progress: Math.round(100 * event.loaded / event.total)
@@ -589,191 +393,83 @@
                         }
                         break;
                     case http.HttpEventType.Response:
-                        if (result.state !== FileDownloadState.completed) {
-                            result = __assign({}, result, { state: FileDownloadState.completed });
+                        if (result.state !== exports.FileDownloadState.completed) {
+                            result = __assign(__assign({}, result), { state: exports.FileDownloadState.completed });
                             FileDownload.blobSave(saveAs, event.body);
                         }
                         break;
                 }
                 return result;
-            })), operators.filter((/**
-             * @param {?} val
-             * @return {?}
-             */
-            function (val) { return !util.isNullOrUndefined(val); })), operators.distinctUntilChanged());
+            }), operators.filter(function (val) { return !util.isNullOrUndefined(val); }), operators.distinctUntilChanged());
         };
         /**
          * Upload the files using POST HTTP method
          */
-        /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        FileDownload.prototype.get = /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        function (url, saveAs, options) {
+        FileDownload.prototype.get = function (url, saveAs, options) {
             if (options === void 0) { options = {}; }
             return this.download('get', url, saveAs, options);
         };
         /**
          * Upload the files using POST HTTP method
          */
-        /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        FileDownload.prototype.post = /**
-         * Upload the files using POST HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        function (url, saveAs, options) {
+        FileDownload.prototype.post = function (url, saveAs, options) {
             if (options === void 0) { options = {}; }
             return this.download('post', url, saveAs, options);
         };
         /**
          * Upload the files using PUT HTTP method
          */
-        /**
-         * Upload the files using PUT HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        FileDownload.prototype.put = /**
-         * Upload the files using PUT HTTP method
-         * @param {?} url
-         * @param {?} saveAs
-         * @param {?=} options
-         * @return {?}
-         */
-        function (url, saveAs, options) {
+        FileDownload.prototype.put = function (url, saveAs, options) {
             if (options === void 0) { options = {}; }
             return this.download('put', url, saveAs, options);
         };
-        FileDownload.decorators = [
-            { type: core.Injectable }
-        ];
-        /** @nocollapse */
-        FileDownload.ctorParameters = function () { return [
-            { type: http.HttpClient }
-        ]; };
+        /** @nocollapse */ FileDownload.ɵfac = function FileDownload_Factory(t) { return new (t || FileDownload)(core.ɵɵinject(http.HttpClient)); };
+        /** @nocollapse */ FileDownload.ɵprov = core.ɵɵdefineInjectable({ token: FileDownload, factory: FileDownload.ɵfac });
         return FileDownload;
     }());
-    if (false) {
-        /**
-         * @type {?}
-         * @private
-         */
-        FileDownload.prototype.http;
-    }
+    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(FileDownload, [{
+            type: core.Injectable
+        }], function () { return [{ type: http.HttpClient }]; }, null); })();
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
-    /** @enum {string} */
-    var TypeTokenStorage = {
-        cookie: 'cookie',
-        localStorage: 'localStorage',
-        sessionStorage: 'sessionStorage',
-    };
+
+    (function (TypeTokenStorage) {
+        TypeTokenStorage["cookie"] = "cookie";
+        TypeTokenStorage["localStorage"] = "localStorage";
+        TypeTokenStorage["sessionStorage"] = "sessionStorage";
+    })(exports.TypeTokenStorage || (exports.TypeTokenStorage = {}));
     var RestServiceConfig = /** @class */ (function () {
         function RestServiceConfig() {
         }
         return RestServiceConfig;
     }());
-    if (false) {
-        /** @type {?} */
-        RestServiceConfig.prototype.endPoint;
-        /** @type {?} */
-        RestServiceConfig.prototype.mockData;
-        /** @type {?} */
-        RestServiceConfig.prototype.tokenStorage;
-        /** @type {?} */
-        RestServiceConfig.prototype.tokenName;
-        /** @type {?} */
-        RestServiceConfig.prototype.secureCookie;
-        /** @type {?} */
-        RestServiceConfig.prototype.language;
-        /** @type {?} */
-        RestServiceConfig.prototype.authUri;
-        /** @type {?} */
-        RestServiceConfig.prototype.validationTokenUri;
-        /** @type {?} */
-        RestServiceConfig.prototype.UnauthorizedRedirectUri;
-    }
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
-    /** @enum {string} */
-    var HttpMethod = {
-        Get: 'get',
-        Post: 'post',
-        Put: 'put',
-        Delete: 'Delete',
-    };
+    var HttpMethod;
+    (function (HttpMethod) {
+        HttpMethod["Get"] = "get";
+        HttpMethod["Post"] = "post";
+        HttpMethod["Put"] = "put";
+        HttpMethod["Delete"] = "Delete";
+    })(HttpMethod || (HttpMethod = {}));
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
     var JwtHelper = /** @class */ (function () {
         function JwtHelper() {
         }
-        /**
-         * @param {?=} token
-         * @return {?}
-         */
-        JwtHelper.decodeToken = /**
-         * @param {?=} token
-         * @return {?}
-         */
-        function (token) {
+        JwtHelper.decodeToken = function (token) {
             if (token === void 0) { token = ''; }
             if (token === null || token === '') {
                 return null;
             }
-            /** @type {?} */
             var parts = token.split('.');
             if (parts.length !== 3) {
                 return null;
             }
-            /** @type {?} */
             var decoded = this.urlBase64Decode(parts[1]);
             if (!decoded) {
                 return null;
             }
             return JSON.parse(decoded);
         };
-        /**
-         * @private
-         * @param {?} str
-         * @return {?}
-         */
-        JwtHelper.urlBase64Decode = /**
-         * @private
-         * @param {?} str
-         * @return {?}
-         */
-        function (str) {
-            /** @type {?} */
+        JwtHelper.urlBase64Decode = function (str) {
             var output = str;
             switch (output.length % 4) {
                 case 0:
@@ -787,43 +483,20 @@
                 default:
                     return null;
             }
-            /** @type {?} */
             var data = atob(output);
             return decodeURIComponent(data);
         };
         return JwtHelper;
     }());
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
     var CacheService = /** @class */ (function () {
         function CacheService() {
             this.cache = new Map();
         }
-        /**
-         * @param {?} key
-         * @param {?} data
-         * @return {?}
-         */
-        CacheService.prototype.set = /**
-         * @param {?} key
-         * @param {?} data
-         * @return {?}
-         */
-        function (key, data) {
+        CacheService.prototype.set = function (key, data) {
             this.cache.set(key, data);
         };
-        /**
-         * @param {?} key
-         * @return {?}
-         */
-        CacheService.prototype.get = /**
-         * @param {?} key
-         * @return {?}
-         */
-        function (key) {
+        CacheService.prototype.get = function (key) {
             if (this.cache.has(key)) {
                 return this.cache.get(key);
             }
@@ -831,51 +504,30 @@
                 return null;
             }
         };
-        /**
-         * @param {?} key
-         * @return {?}
-         */
-        CacheService.prototype.invalidate = /**
-         * @param {?} key
-         * @return {?}
-         */
-        function (key) {
+        CacheService.prototype.invalidate = function (key) {
             if (this.cache.has(key)) {
             }
         };
-        CacheService.decorators = [
-            { type: core.Injectable, args: [{
-                        providedIn: 'root'
-                    },] }
-        ];
-        /** @nocollapse */ CacheService.ngInjectableDef = core.ɵɵdefineInjectable({ factory: function CacheService_Factory() { return new CacheService(); }, token: CacheService, providedIn: "root" });
+        /** @nocollapse */ CacheService.ɵfac = function CacheService_Factory(t) { return new (t || CacheService)(); };
+        /** @nocollapse */ CacheService.ɵprov = core.ɵɵdefineInjectable({ token: CacheService, factory: CacheService.ɵfac, providedIn: 'root' });
         return CacheService;
     }());
-    if (false) {
-        /**
-         * @type {?}
-         * @private
-         */
-        CacheService.prototype.cache;
-    }
+    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(CacheService, [{
+            type: core.Injectable,
+            args: [{
+                    providedIn: 'root'
+                }]
+        }], null, null); })();
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
     var RestClientService = /** @class */ (function () {
         function RestClientService(http, cookies, cache, router, config) {
             this.http = http;
             this.cookies = cookies;
             this.cache = cache;
             this.router = router;
-            /**
-             * Handler used to stop all pending requests
-             */
+            /** Handler used to stop all pending requests */
             this.cancelPending$ = new rxjs.Subject();
-            /**
-             * Default requests header
-             */
+            /**  Default requests header */
             this.baseHeader = {
                 'Cache-Control': 'no-cache',
                 accept: 'application/json',
@@ -883,32 +535,24 @@
                 Authorization: '',
                 'Accept-Language': '*'
             };
-            /**
-             * When true, the request header will include the authentication token
-             */
+            /** When true, the request header will include the authentication token */
             this.secureRequest = false;
-            /**
-             * Holds a list of files to be upload on request
-             */
+            /** Holds a list of files to be upload on request */
             this.withFilesRequest = false;
-            /**
-             * Prefer cache
-             */
+            /** Prefer cache */
             this.cachedRequest = false;
-            /**
-             * Invalidate cache
-             */
+            /** Invalidate cache */
             this.invalidateCache = false;
-            this.config = (/** @type {?} */ ({
+            this.config = {
                 endPoint: '',
                 tokenName: 'AuthToken',
-                tokenStorage: TypeTokenStorage.cookie,
+                tokenStorage: exports.TypeTokenStorage.cookie,
                 secureCookie: false,
                 mockData: false,
                 validationTokenUri: '/info',
                 authUri: '/authorize',
                 UnauthorizedRedirectUri: null
-            }));
+            };
             if (config) {
                 this.setConfig(config);
             }
@@ -919,57 +563,28 @@
          * CAUTION: This method overrides the current configuration settings
          * and this settings will apply to all following requests
          */
-        /**
-         * Set the Rest Client configuration parameters.
-         *
-         * CAUTION: This method overrides the current configuration settings
-         * and this settings will apply to all following requests
-         * @param {?} config
-         * @return {?}
-         */
-        RestClientService.prototype.setConfig = /**
-         * Set the Rest Client configuration parameters.
-         *
-         * CAUTION: This method overrides the current configuration settings
-         * and this settings will apply to all following requests
-         * @param {?} config
-         * @return {?}
-         */
-        function (config) {
-            this.config = (/** @type {?} */ (__assign({}, this.config, config)));
+        RestClientService.prototype.setConfig = function (config) {
+            this.config = __assign(__assign({}, this.config), config);
             return this;
         };
         /** Return the current Rest Client configuration parameters.  */
-        /**
-         * Return the current Rest Client configuration parameters.
-         * @return {?}
-         */
-        RestClientService.prototype.getConfig = /**
-         * Return the current Rest Client configuration parameters.
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.getConfig = function () {
             return this.config;
         };
         Object.defineProperty(RestClientService.prototype, "token", {
             /**
              * Get the API Token from cookies
              */
-            get: /**
-             * Get the API Token from cookies
-             * @return {?}
-             */
-            function () {
-                /** @type {?} */
+            get: function () {
                 var token = '';
                 switch (this.config.tokenStorage) {
-                    case TypeTokenStorage.cookie:
+                    case exports.TypeTokenStorage.cookie:
                         token = this.cookies.get(this.config.tokenName);
                         break;
-                    case TypeTokenStorage.localStorage:
+                    case exports.TypeTokenStorage.localStorage:
                         token = localStorage.getItem(this.config.tokenName);
                         break;
-                    case TypeTokenStorage.sessionStorage:
+                    case exports.TypeTokenStorage.sessionStorage:
                         token = sessionStorage.getItem(this.config.tokenName);
                         break;
                     default:
@@ -980,24 +595,17 @@
             /**
              * Save the API Token cookie
              */
-            set: /**
-             * Save the API Token cookie
-             * @param {?} token
-             * @return {?}
-             */
-            function (token) {
-                /** @type {?} */
+            set: function (token) {
                 var decoded = JwtHelper.decodeToken(token);
-                /** @type {?} */
                 var expires = dateFns.fromUnixTime(decoded.exp);
                 switch (this.config.tokenStorage) {
-                    case TypeTokenStorage.cookie:
+                    case exports.TypeTokenStorage.cookie:
                         this.cookies.put(this.config.tokenName, token, { secure: this.config.secureCookie, expires: expires });
                         break;
-                    case TypeTokenStorage.localStorage:
+                    case exports.TypeTokenStorage.localStorage:
                         localStorage.setItem(this.config.tokenName, token);
                         break;
-                    case TypeTokenStorage.sessionStorage:
+                    case exports.TypeTokenStorage.sessionStorage:
                         sessionStorage.setItem(this.config.tokenName, token);
                         break;
                     default:
@@ -1010,23 +618,15 @@
         /**
          * Remove the Authentication token cookie
          */
-        /**
-         * Remove the Authentication token cookie
-         * @return {?}
-         */
-        RestClientService.prototype.revoke = /**
-         * Remove the Authentication token cookie
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.revoke = function () {
             switch (this.config.tokenStorage) {
-                case TypeTokenStorage.cookie:
+                case exports.TypeTokenStorage.cookie:
                     this.cookies.removeAll();
                     break;
-                case TypeTokenStorage.localStorage:
+                case exports.TypeTokenStorage.localStorage:
                     localStorage.removeItem(this.config.tokenName);
                     break;
-                case TypeTokenStorage.sessionStorage:
+                case exports.TypeTokenStorage.sessionStorage:
                     sessionStorage.removeItem(this.config.tokenName);
                     break;
                 default:
@@ -1039,111 +639,40 @@
          * @param username Username
          * @param password Password
          */
-        /**
-         * Request an Authorization token
-         * The default authorization URI is '[API_END_POINT]/authorize'
-         * @param {?} username Username
-         * @param {?} password Password
-         * @return {?}
-         */
-        RestClientService.prototype.authorize = /**
-         * Request an Authorization token
-         * The default authorization URI is '[API_END_POINT]/authorize'
-         * @param {?} username Username
-         * @param {?} password Password
-         * @return {?}
-         */
-        function (username, password) {
+        RestClientService.prototype.authorize = function (username, password) {
             var _this = this;
             return this.post(this.config.authUri, { username: username, password: password })
-                .pipe(operators.tap((/**
-             * @param {?} payload
-             * @return {?}
-             */
-            function (payload) {
+                .pipe(operators.tap(function (payload) {
                 _this.token = payload;
-            })));
+            }));
         };
         /** Validate the Authentication token against the API */
-        /**
-         * Validate the Authentication token against the API
-         * @param {?} url
-         * @return {?}
-         */
-        RestClientService.prototype.validateToken = /**
-         * Validate the Authentication token against the API
-         * @param {?} url
-         * @return {?}
-         */
-        function (url) {
+        RestClientService.prototype.validateToken = function (url) {
             return this.secured().request(HttpMethod.Post, url);
         };
         /** Removes authorization token */
-        /**
-         * Removes authorization token
-         * @param {?} url
-         * @return {?}
-         */
-        RestClientService.prototype.deauthorize = /**
-         * Removes authorization token
-         * @param {?} url
-         * @return {?}
-         */
-        function (url) {
+        RestClientService.prototype.deauthorize = function (url) {
             var _this = this;
             return this.secured().request(HttpMethod.Get, url)
-                .pipe(operators.tap((/**
-             * @return {?}
-             */
-            function () {
+                .pipe(operators.tap(function () {
                 _this.revoke();
-            })));
+            }));
         };
         /** Check if the client is already Authenticate  */
-        /**
-         * Check if the client is already Authenticate
-         * @return {?}
-         */
-        RestClientService.prototype.isAuthorized = /**
-         * Check if the client is already Authenticate
-         * @return {?}
-         */
-        function () {
-            /** @type {?} */
+        RestClientService.prototype.isAuthorized = function () {
             var token = this.token;
-            /** @type {?} */
             var decoded = JwtHelper.decodeToken(token);
             return decoded !== null && !dateFns.isAfter(new Date(), dateFns.fromUnixTime(decoded.exp));
         };
         /** Cancel all pending requests */
-        /**
-         * Cancel all pending requests
-         * @return {?}
-         */
-        RestClientService.prototype.cancelPendingRequests = /**
-         * Cancel all pending requests
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.cancelPendingRequests = function () {
             this.cancelPending$.next(true);
         };
-        /**
-         * @template THIS
-         * @this {THIS}
-         * @param {?=} invalidate
-         * @return {THIS}
-         */
-        RestClientService.prototype.cached = /**
-         * @template THIS
-         * @this {THIS}
-         * @param {?=} invalidate
-         * @return {THIS}
-         */
-        function (invalidate) {
+        RestClientService.prototype.cached = function (invalidate) {
             if (invalidate === void 0) { invalidate = false; }
-            (/** @type {?} */ (this)).cachedRequest = true;
-            (/** @type {?} */ (this)).invalidateCache = invalidate;
-            return (/** @type {?} */ (this));
+            this.cachedRequest = true;
+            this.invalidateCache = invalidate;
+            return this;
         };
         /**
          * Set the request mode to SECURED for the next request.
@@ -1151,21 +680,7 @@
          * Secured Mode force the next request to include the authentication token.
          * The token must be requested previously using the "authorize" method.
          */
-        /**
-         * Set the request mode to SECURED for the next request.
-         *
-         * Secured Mode force the next request to include the authentication token.
-         * The token must be requested previously using the "authorize" method.
-         * @return {?}
-         */
-        RestClientService.prototype.secured = /**
-         * Set the request mode to SECURED for the next request.
-         *
-         * Secured Mode force the next request to include the authentication token.
-         * The token must be requested previously using the "authorize" method.
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.secured = function () {
             this.secureRequest = true;
             return this;
         };
@@ -1175,21 +690,7 @@
          * Public is the default request mode and ensure that no authentication token
          * will be pass on the next request.
          */
-        /**
-         * Set the request mode to PUBLIC for the next request.
-         *
-         * Public is the default request mode and ensure that no authentication token
-         * will be pass on the next request.
-         * @return {?}
-         */
-        RestClientService.prototype.public = /**
-         * Set the request mode to PUBLIC for the next request.
-         *
-         * Public is the default request mode and ensure that no authentication token
-         * will be pass on the next request.
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.public = function () {
             this.secureRequest = false;
             return this;
         };
@@ -1199,21 +700,7 @@
          * @param url
          * @param data A list of parametes
          */
-        /**
-         * API request using GET method
-         *
-         * @param {?} url
-         * @param {?=} data A list of parametes
-         * @return {?}
-         */
-        RestClientService.prototype.get = /**
-         * API request using GET method
-         *
-         * @param {?} url
-         * @param {?=} data A list of parametes
-         * @return {?}
-         */
-        function (url, data) {
+        RestClientService.prototype.get = function (url, data) {
             return this.request(HttpMethod.Get, url, data);
         };
         /**
@@ -1224,25 +711,7 @@
          * @param responseType
          * @param httpOptions
          */
-        /**
-         * API request using POST method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        RestClientService.prototype.post = /**
-         * API request using POST method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        function (url, data, responseType, httpOptions) {
+        RestClientService.prototype.post = function (url, data, responseType, httpOptions) {
             if (httpOptions === void 0) { httpOptions = {}; }
             return this.request(HttpMethod.Post, url, data, responseType, httpOptions);
         };
@@ -1254,25 +723,7 @@
          * @param responseType
          * @param httpOptions
          */
-        /**
-         * API request using PUT method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        RestClientService.prototype.put = /**
-         * API request using PUT method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        function (url, data, responseType, httpOptions) {
+        RestClientService.prototype.put = function (url, data, responseType, httpOptions) {
             if (httpOptions === void 0) { httpOptions = {}; }
             return this.request(HttpMethod.Put, url, data, responseType, httpOptions);
         };
@@ -1283,65 +734,23 @@
          * @param data
          * @param responseType
          */
-        /**
-         * API request using DELETE method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @return {?}
-         */
-        RestClientService.prototype.delete = /**
-         * API request using DELETE method
-         *
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @return {?}
-         */
-        function (url, data, responseType) {
+        RestClientService.prototype.delete = function (url, data, responseType) {
             return this.request(HttpMethod.Delete, url, data, responseType);
         };
         /** Set the upload file mode */
-        /**
-         * Set the upload file mode
-         * @return {?}
-         */
-        RestClientService.prototype.withFiles = /**
-         * Set the upload file mode
-         * @return {?}
-         */
-        function () {
+        RestClientService.prototype.withFiles = function () {
             this.withFilesRequest = true;
             return this;
         };
         /**
          * Create a FormData object to be send as request payload data
          */
-        /**
-         * Create a FormData object to be send as request payload data
-         * @protected
-         * @param {?} object
-         * @param {?=} form
-         * @param {?=} namespace
-         * @return {?}
-         */
-        RestClientService.prototype.createFormData = /**
-         * Create a FormData object to be send as request payload data
-         * @protected
-         * @param {?} object
-         * @param {?=} form
-         * @param {?=} namespace
-         * @return {?}
-         */
-        function (object, form, namespace) {
-            /** @type {?} */
+        RestClientService.prototype.createFormData = function (object, form, namespace) {
             var formData = form || new FormData();
             for (var property in object) {
                 if (!object.hasOwnProperty(property) || !object[property]) {
                     continue;
                 }
-                /** @type {?} */
                 var formKey = namespace ? namespace + "[" + property + "]" : property;
                 if (object[property] instanceof Date) {
                     formData.append(formKey, object[property].toISOString());
@@ -1360,22 +769,9 @@
             }
             return formData;
         };
-        /**
-         * @protected
-         * @param {?} url
-         * @return {?}
-         */
-        RestClientService.prototype.buildUrl = /**
-         * @protected
-         * @param {?} url
-         * @return {?}
-         */
-        function (url) {
-            /** @type {?} */
+        RestClientService.prototype.buildUrl = function (url) {
             var endPoint = this.config.mockData ? 'assets/mock-data' : this.config.endPoint.replace(/\/$/, '');
-            /** @type {?} */
             var nUrl = endPoint + "/" + url.replace(/^\//g, '');
-            /** @type {?} */
             var match = nUrl.match(/\.([0-9a-z]+)(?:[\?#]|$)/i);
             if (this.config.mockData && match == null) {
                 nUrl = nUrl + ".json";
@@ -1385,24 +781,12 @@
         /**
          * Return the request headers based on configuration parameters
          */
-        /**
-         * Return the request headers based on configuration parameters
-         * @private
-         * @return {?}
-         */
-        RestClientService.prototype.buildHeaders = /**
-         * Return the request headers based on configuration parameters
-         * @private
-         * @return {?}
-         */
-        function () {
-            /** @type {?} */
+        RestClientService.prototype.buildHeaders = function () {
             var header = __assign({}, this.baseHeader);
             if (this.config.language) {
                 header['Accept-Language'] = this.config.language;
             }
             if (this.secureRequest) {
-                /** @type {?} */
                 var token = this.token;
                 if (!token) {
                     console.warn('Executing a secure request without TOKEN. '
@@ -1416,45 +800,20 @@
             return header;
         };
         /** Raw request method */
-        /**
-         * Raw request method
-         * @protected
-         * @param {?} method
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        RestClientService.prototype.request = /**
-         * Raw request method
-         * @protected
-         * @param {?} method
-         * @param {?} url
-         * @param {?=} data
-         * @param {?=} responseType
-         * @param {?=} httpOptions
-         * @return {?}
-         */
-        function (method, url, data, responseType, httpOptions) {
+        RestClientService.prototype.request = function (method, url, data, responseType, httpOptions) {
             var _this = this;
             if (httpOptions === void 0) { httpOptions = {}; }
-            /** @type {?} */
             var msDelay = Math.floor((Math.random() * 2000) + 1000);
-            /** @type {?} */
             var header = this.buildHeaders();
-            /** @type {?} */
-            var rType = (/** @type {?} */ ((responseType ? responseType : 'json')));
+            var rType = (responseType ? responseType : 'json');
             if (this.withFilesRequest) {
                 data = this.createFormData(data);
                 this.withFilesRequest = false;
             }
-            /** @type {?} */
             var cacheKey = '';
             if (this.cachedRequest) {
                 cacheKey = btoa(unescape(encodeURIComponent(method + '_' + url + '_' + (method === HttpMethod.Get ? JSON.stringify(data) : ''))));
                 if (!this.invalidateCache) {
-                    /** @type {?} */
                     var cached = this.cache.get(cacheKey);
                     if (cached) {
                         this.cachedRequest = false;
@@ -1465,7 +824,6 @@
                     this.cache.invalidate(cacheKey);
                 }
             }
-            /** @type {?} */
             var options = {
                 body: method === HttpMethod.Get ? {} : data,
                 responseType: rType,
@@ -1473,133 +831,42 @@
                 headers: header
             };
             return this.http
-                .request(this.config.mockData ? HttpMethod.Get : method, this.buildUrl(url), __assign({}, options, httpOptions))
+                .request(this.config.mockData ? HttpMethod.Get : method, this.buildUrl(url), __assign(__assign({}, options), httpOptions))
                 .pipe(operators.takeUntil(this.cancelPending$))
                 .pipe(operators.delay(this.config.mockData ? msDelay : 0))
-                .pipe(operators.tap((/**
-             * @param {?} resp
-             * @return {?}
-             */
-            function (resp) {
+                .pipe(operators.tap(function (resp) {
                 if (_this.cachedRequest) {
                     _this.cachedRequest = false;
                     _this.cache.set(cacheKey, resp);
                 }
-            })))
-                .pipe(operators.catchError((/**
-             * @param {?} err
-             * @return {?}
-             */
-            function (err) {
+            }))
+                .pipe(operators.catchError(function (err) {
                 if (_this.config.UnauthorizedRedirectUri
                     && url !== _this.config.authUri
                     && err.status === 401) {
-                    _this.router.navigate([_this.config.UnauthorizedRedirectUri]).then((/**
-                     * @return {?}
-                     */
-                    function () { }));
+                    _this.router.navigate([_this.config.UnauthorizedRedirectUri]).then(function () { });
                     _this.cancelPendingRequests();
                 }
                 return rxjs.throwError(err);
-            })));
+            }));
         };
-        RestClientService.decorators = [
-            { type: core.Injectable, args: [{
-                        providedIn: 'root'
-                    },] }
-        ];
-        /** @nocollapse */
-        RestClientService.ctorParameters = function () { return [
-            { type: http.HttpClient },
-            { type: ngxCookie.CookieService },
-            { type: CacheService },
-            { type: router.Router },
-            { type: RestServiceConfig, decorators: [{ type: core.Optional }] }
-        ]; };
-        /** @nocollapse */ RestClientService.ngInjectableDef = core.ɵɵdefineInjectable({ factory: function RestClientService_Factory() { return new RestClientService(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(CacheService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); }, token: RestClientService, providedIn: "root" });
+        /** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(CacheService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); };
+        /** @nocollapse */ RestClientService.ɵprov = core.ɵɵdefineInjectable({ token: RestClientService, factory: RestClientService.ɵfac, providedIn: 'root' });
         return RestClientService;
     }());
-    if (false) {
-        /**
-         * Handler used to stop all pending requests
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.cancelPending$;
-        /**
-         * Default requests header
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.baseHeader;
-        /**
-         * Service configuration parameters
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.config;
-        /**
-         * When true, the request header will include the authentication token
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.secureRequest;
-        /**
-         * Holds a list of files to be upload on request
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.withFilesRequest;
-        /**
-         * Prefer cache
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.cachedRequest;
-        /**
-         * Invalidate cache
-         * @type {?}
-         * @protected
-         */
-        RestClientService.prototype.invalidateCache;
-        /**
-         * @type {?}
-         * @private
-         */
-        RestClientService.prototype.http;
-        /**
-         * @type {?}
-         * @private
-         */
-        RestClientService.prototype.cookies;
-        /**
-         * @type {?}
-         * @private
-         */
-        RestClientService.prototype.cache;
-        /**
-         * @type {?}
-         * @private
-         */
-        RestClientService.prototype.router;
-    }
+    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(RestClientService, [{
+            type: core.Injectable,
+            args: [{
+                    providedIn: 'root'
+                }]
+        }], function () { return [{ type: http.HttpClient }, { type: ngxCookie.CookieService }, { type: CacheService }, { type: router.Router }, { type: RestServiceConfig, decorators: [{
+                    type: core.Optional
+                }] }]; }, null); })();
 
-    /**
-     * @fileoverview added by tsickle
-     * @suppress {checkTypes,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
-     */
     var NgxRestModule = /** @class */ (function () {
         function NgxRestModule() {
         }
-        /**
-         * @param {?=} config
-         * @return {?}
-         */
-        NgxRestModule.forRoot = /**
-         * @param {?=} config
-         * @return {?}
-         */
-        function (config) {
+        NgxRestModule.forRoot = function (config) {
             return {
                 ngModule: NgxRestModule,
                 providers: [
@@ -1607,33 +874,42 @@
                 ]
             };
         };
-        NgxRestModule.decorators = [
-            { type: core.NgModule, args: [{
-                        imports: [
-                            http.HttpClientModule,
-                            ngxCookie.CookieModule.forRoot()
-                        ],
-                        providers: [
-                            http.HttpClient,
-                            ngxCookie.CookieService,
-                            FileDownload,
-                            FileUpload,
-                            router.RouterModule
-                        ]
-                    },] }
-        ];
+        /** @nocollapse */ NgxRestModule.ɵmod = core.ɵɵdefineNgModule({ type: NgxRestModule });
+        /** @nocollapse */ NgxRestModule.ɵinj = core.ɵɵdefineInjector({ factory: function NgxRestModule_Factory(t) { return new (t || NgxRestModule)(); }, providers: [
+                http.HttpClient,
+                ngxCookie.CookieService,
+                FileDownload,
+                FileUpload,
+                router.RouterModule
+            ], imports: [[
+                    http.HttpClientModule,
+                    ngxCookie.CookieModule.forRoot()
+                ]] });
         return NgxRestModule;
     }());
+    (function () { (typeof ngJitMode === "undefined" || ngJitMode) && core.ɵɵsetNgModuleScope(NgxRestModule, { imports: [http.HttpClientModule, ngxCookie.CookieModule] }); })();
+    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(NgxRestModule, [{
+            type: core.NgModule,
+            args: [{
+                    imports: [
+                        http.HttpClientModule,
+                        ngxCookie.CookieModule.forRoot()
+                    ],
+                    providers: [
+                        http.HttpClient,
+                        ngxCookie.CookieService,
+                        FileDownload,
+                        FileUpload,
+                        router.RouterModule
+                    ]
+                }]
+        }], null, null); })();
 
     exports.FileDownload = FileDownload;
-    exports.FileDownloadState = FileDownloadState;
     exports.FileUpload = FileUpload;
-    exports.FileUploadState = FileUploadState;
     exports.NgxRestModule = NgxRestModule;
     exports.RestClientService = RestClientService;
     exports.RestServiceConfig = RestServiceConfig;
-    exports.TypeTokenStorage = TypeTokenStorage;
-    exports.ɵa = CacheService;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

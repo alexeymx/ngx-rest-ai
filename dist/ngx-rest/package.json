@@ -5,7 +5,8 @@
     "@angular/common": "^8.2.0",
     "@angular/core": "^8.2.0",
     "ngx-cookie": "^4.1.2",
-    "date-fns": "^2.7.0"
+    "date-fns": "^2.7.0",
+    "tslib": "^1.10.0"
   },
   "main": "bundles/ngx-rest.umd.js",
   "module": "fesm5/ngx-rest.js",
@@ -15,9 +16,8 @@
   "fesm5": "fesm5/ngx-rest.js",
   "fesm2015": "fesm2015/ngx-rest.js",
   "typings": "ngx-rest.d.ts",
-  "metadata": "ngx-rest.metadata.json",
   "sideEffects": false,
-  "dependencies": {
-    "tslib": "^1.9.0"
+  "scripts": {
+    "prepublishOnly": "node --eval \"console.error('ERROR: Trying to publish a package that has been compiled by Ivy. This is not allowed.\\nPlease delete and rebuild the package, without compiling with Ivy, before attempting to publish.\\n')\" && exit 1"
   }
 }

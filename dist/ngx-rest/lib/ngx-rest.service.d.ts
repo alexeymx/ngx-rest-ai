@@ -6,6 +6,7 @@ import { IHttpOptions } from './http-options.interface';
 import { HttpMethod } from './http-method.enum';
 import { RestServiceConfig } from './ngx-rest.config';
 import { CacheService } from './cache.service';
+import * as i0 from "@angular/core";
 export declare class RestClientService {
     private http;
     private cookies;
@@ -44,10 +45,11 @@ export declare class RestClientService {
     /**
      * Get the API Token from cookies
      */
+    get token(): string;
     /**
-    * Save the API Token cookie
-    */
-    token: string;
+     * Save the API Token cookie
+     */
+    set token(token: string);
     /**
      * Remove the Authentication token cookie
      */
@@ -128,4 +130,6 @@ export declare class RestClientService {
     private buildHeaders;
     /** Raw request method */
     protected request(method: HttpMethod, url: string, data?: any, responseType?: string, httpOptions?: IHttpOptions): Observable<any>;
+    static ɵfac: i0.ɵɵFactoryDef<RestClientService, [null, null, null, null, { optional: true; }]>;
+    static ɵprov: i0.ɵɵInjectableDef<RestClientService>;
 }
