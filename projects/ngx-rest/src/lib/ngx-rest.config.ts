@@ -14,4 +14,5 @@ export class RestServiceConfig {
   public authUri?: string;
   public validationTokenUri?: string;
   public UnauthorizedRedirectUri?: string;
+  public UnauthenticatedRedirectUri?: string;
 }

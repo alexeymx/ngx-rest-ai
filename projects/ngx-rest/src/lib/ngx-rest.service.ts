@@ -2,7 +2,7 @@ import { Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie';
-import { Observable, Subject, throwError, of } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { takeUntil, tap, catchError, delay } from 'rxjs/operators';
 import { isAfter, fromUnixTime } from 'date-fns';
 
@@ -394,9 +394,18 @@ export class RestClientService {
       .pipe(delay(this.config.mockData ? msDelay : 0))
       .pipe(catchError((err) => {
         if (
-          this.config.UnauthorizedRedirectUri
+          this.config.UnauthenticatedRedirectUri
           && url !== this.config.authUri
           && err.status === 401
+        ) {
+          this.router.navigate([this.config.UnauthenticatedRedirectUri]).then(() => { });
+          this.cancelPendingRequests();
+        }
+
+        if (
+          this.config.UnauthorizedRedirectUri
+          && url !== this.config.authUri
+          && err.status === 403
         ) {
           this.router.navigate([this.config.UnauthorizedRedirectUri]).then(() => { });
           this.cancelPendingRequests();
