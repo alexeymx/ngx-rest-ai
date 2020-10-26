@@ -49,7 +49,7 @@ export class RestClientService {
       secureCookie: false,
       mockData: false,
       validationTokenUri: '/info',
-      authUri: '/authorize',
+      authUri: '/authenticate',
       UnauthorizedRedirectUri: null
     } as RestServiceConfig;
 
@@ -148,8 +148,19 @@ export class RestClientService {
    * The default authorization URI is '[API_END_POINT]/authorize'
    * @param username Username
    * @param password Password
+   * @deprecated Use `authenticate` method instead
    */
   public authorize(username: string, password: string): Observable<any> {
+    return this.authenticate(username, password);
+  }
+
+  /**
+   * Request an authentication token
+   * The default authentication URI is '[API_END_POINT]/authenticate'
+   * @param username Username
+   * @param password Password
+   */
+  public authenticate(username: string, password: string): Observable<any> {
     return this.post(this.config.authUri, { username, password })
       .pipe(
         tap(payload => {
@@ -163,8 +174,20 @@ export class RestClientService {
     return this.secured().request(HttpMethod.Post, url);
   }
 
-  /** Removes authorization token */
+  /**
+   * Removes authorization token
+   * @param url a url to report to
+   * @deprecated use `deauthenticate` method instead
+   */
   public deauthorize(url: string): Observable<any> {
+    return this.deauthenticate(url);
+  }
+
+  /**
+   * Removes authorization token and reports logout to the server
+   * @param url a url to report to
+   */
+  public deauthenticate(url: string): Observable<any> {
     return this.secured().request(HttpMethod.Get, url)
       .pipe(
         tap(() => {
@@ -173,8 +196,20 @@ export class RestClientService {
       );
   }
 
-  /** Check if the client is already Authenticate  */
+  /**
+   * Check if the client is already authenticated
+   * @deprecated use `isAuthenticated` method instead
+   */
   public isAuthorized(): boolean {
+    const token = this.token;
+    const decoded = JwtHelper.decodeToken(token);
+    return decoded !== null && !isAfter(new Date(), fromUnixTime(decoded.exp));
+  }
+
+  /**
+   * Check if the client is already authenticated
+   */
+  public isAuthenticated(): boolean {
     const token = this.token;
     const decoded = JwtHelper.decodeToken(token);
     return decoded !== null && !isAfter(new Date(), fromUnixTime(decoded.exp));
