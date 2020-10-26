@@ -489,41 +489,10 @@
         return JwtHelper;
     }());
 
-    var CacheService = /** @class */ (function () {
-        function CacheService() {
-            this.cache = new Map();
-        }
-        CacheService.prototype.set = function (key, data) {
-            this.cache.set(key, data);
-        };
-        CacheService.prototype.get = function (key) {
-            if (this.cache.has(key)) {
-                return this.cache.get(key);
-            }
-            else {
-                return null;
-            }
-        };
-        CacheService.prototype.invalidate = function (key) {
-            if (this.cache.has(key)) {
-            }
-        };
-        /** @nocollapse */ CacheService.ɵfac = function CacheService_Factory(t) { return new (t || CacheService)(); };
-        /** @nocollapse */ CacheService.ɵprov = core.ɵɵdefineInjectable({ token: CacheService, factory: CacheService.ɵfac, providedIn: 'root' });
-        return CacheService;
-    }());
-    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(CacheService, [{
-            type: core.Injectable,
-            args: [{
-                    providedIn: 'root'
-                }]
-        }], null, null); })();
-
     var RestClientService = /** @class */ (function () {
-        function RestClientService(http, cookies, cache, router, config) {
+        function RestClientService(http, cookies, router, config) {
             this.http = http;
             this.cookies = cookies;
-            this.cache = cache;
             this.router = router;
             /** Handler used to stop all pending requests */
             this.cancelPending$ = new rxjs.Subject();
@@ -539,10 +508,6 @@
             this.secureRequest = false;
             /** Holds a list of files to be upload on request */
             this.withFilesRequest = false;
-            /** Prefer cache */
-            this.cachedRequest = false;
-            /** Invalidate cache */
-            this.invalidateCache = false;
             this.config = {
                 endPoint: '',
                 tokenName: 'AuthToken',
@@ -550,7 +515,7 @@
                 secureCookie: false,
                 mockData: false,
                 validationTokenUri: '/info',
-                authUri: '/authorize',
+                authUri: '/authenticate',
                 UnauthorizedRedirectUri: null
             };
             if (config) {
@@ -638,8 +603,18 @@
          * The default authorization URI is '[API_END_POINT]/authorize'
          * @param username Username
          * @param password Password
+         * @deprecated Use `authenticate` method instead
          */
         RestClientService.prototype.authorize = function (username, password) {
+            return this.authenticate(username, password);
+        };
+        /**
+         * Request an authentication token
+         * The default authentication URI is '[API_END_POINT]/authenticate'
+         * @param username Username
+         * @param password Password
+         */
+        RestClientService.prototype.authenticate = function (username, password) {
             var _this = this;
             return this.post(this.config.authUri, { username: username, password: password })
                 .pipe(operators.tap(function (payload) {
@@ -650,16 +625,38 @@
         RestClientService.prototype.validateToken = function (url) {
             return this.secured().request(HttpMethod.Post, url);
         };
-        /** Removes authorization token */
+        /**
+         * Removes authorization token
+         * @param url a url to report to
+         * @deprecated use `deauthenticate` method instead
+         */
         RestClientService.prototype.deauthorize = function (url) {
+            return this.deauthenticate(url);
+        };
+        /**
+         * Removes authorization token and reports logout to the server
+         * @param url a url to report to
+         */
+        RestClientService.prototype.deauthenticate = function (url) {
             var _this = this;
             return this.secured().request(HttpMethod.Get, url)
                 .pipe(operators.tap(function () {
                 _this.revoke();
             }));
         };
-        /** Check if the client is already Authenticate  */
+        /**
+         * Check if the client is already authenticated
+         * @deprecated use `isAuthenticated` method instead
+         */
         RestClientService.prototype.isAuthorized = function () {
+            var token = this.token;
+            var decoded = JwtHelper.decodeToken(token);
+            return decoded !== null && !dateFns.isAfter(new Date(), dateFns.fromUnixTime(decoded.exp));
+        };
+        /**
+         * Check if the client is already authenticated
+         */
+        RestClientService.prototype.isAuthenticated = function () {
             var token = this.token;
             var decoded = JwtHelper.decodeToken(token);
             return decoded !== null && !dateFns.isAfter(new Date(), dateFns.fromUnixTime(decoded.exp));
@@ -667,12 +664,6 @@
         /** Cancel all pending requests */
         RestClientService.prototype.cancelPendingRequests = function () {
             this.cancelPending$.next(true);
-        };
-        RestClientService.prototype.cached = function (invalidate) {
-            if (invalidate === void 0) { invalidate = false; }
-            this.cachedRequest = true;
-            this.invalidateCache = invalidate;
-            return this;
         };
         /**
          * Set the request mode to SECURED for the next request.
@@ -810,20 +801,6 @@
                 data = this.createFormData(data);
                 this.withFilesRequest = false;
             }
-            var cacheKey = '';
-            if (this.cachedRequest) {
-                cacheKey = btoa(unescape(encodeURIComponent(method + '_' + url + '_' + (method === HttpMethod.Get ? JSON.stringify(data) : ''))));
-                if (!this.invalidateCache) {
-                    var cached = this.cache.get(cacheKey);
-                    if (cached) {
-                        this.cachedRequest = false;
-                        return rxjs.of(cached);
-                    }
-                }
-                else {
-                    this.cache.invalidate(cacheKey);
-                }
-            }
             var options = {
                 body: method === HttpMethod.Get ? {} : data,
                 responseType: rType,
@@ -834,23 +811,23 @@
                 .request(this.config.mockData ? HttpMethod.Get : method, this.buildUrl(url), __assign(__assign({}, options), httpOptions))
                 .pipe(operators.takeUntil(this.cancelPending$))
                 .pipe(operators.delay(this.config.mockData ? msDelay : 0))
-                .pipe(operators.tap(function (resp) {
-                if (_this.cachedRequest) {
-                    _this.cachedRequest = false;
-                    _this.cache.set(cacheKey, resp);
-                }
-            }))
                 .pipe(operators.catchError(function (err) {
-                if (_this.config.UnauthorizedRedirectUri
+                if (_this.config.UnauthenticatedRedirectUri
                     && url !== _this.config.authUri
                     && err.status === 401) {
+                    _this.router.navigate([_this.config.UnauthenticatedRedirectUri]).then(function () { });
+                    _this.cancelPendingRequests();
+                }
+                if (_this.config.UnauthorizedRedirectUri
+                    && url !== _this.config.authUri
+                    && err.status === 403) {
                     _this.router.navigate([_this.config.UnauthorizedRedirectUri]).then(function () { });
                     _this.cancelPendingRequests();
                 }
                 return rxjs.throwError(err);
             }));
         };
-        /** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(CacheService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); };
+        /** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); };
         /** @nocollapse */ RestClientService.ɵprov = core.ɵɵdefineInjectable({ token: RestClientService, factory: RestClientService.ɵfac, providedIn: 'root' });
         return RestClientService;
     }());
@@ -859,7 +836,7 @@
             args: [{
                     providedIn: 'root'
                 }]
-        }], function () { return [{ type: http.HttpClient }, { type: ngxCookie.CookieService }, { type: CacheService }, { type: router.Router }, { type: RestServiceConfig, decorators: [{
+        }], function () { return [{ type: http.HttpClient }, { type: ngxCookie.CookieService }, { type: router.Router }, { type: RestServiceConfig, decorators: [{
                     type: core.Optional
                 }] }]; }, null); })();
 

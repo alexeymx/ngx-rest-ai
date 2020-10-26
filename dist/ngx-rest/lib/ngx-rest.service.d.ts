@@ -5,12 +5,10 @@ import { Observable, Subject } from 'rxjs';
 import { IHttpOptions } from './http-options.interface';
 import { HttpMethod } from './http-method.enum';
 import { RestServiceConfig } from './ngx-rest.config';
-import { CacheService } from './cache.service';
 import * as i0 from "@angular/core";
 export declare class RestClientService {
     private http;
     private cookies;
-    private cache;
     private readonly router;
     /** Handler used to stop all pending requests */
     protected cancelPending$: Subject<boolean>;
@@ -28,11 +26,7 @@ export declare class RestClientService {
     protected secureRequest: boolean;
     /** Holds a list of files to be upload on request */
     protected withFilesRequest: boolean;
-    /** Prefer cache */
-    protected cachedRequest: boolean;
-    /** Invalidate cache */
-    protected invalidateCache: boolean;
-    constructor(http: HttpClient, cookies: CookieService, cache: CacheService, router: Router, config: RestServiceConfig);
+    constructor(http: HttpClient, cookies: CookieService, router: Router, config: RestServiceConfig);
     /**
      * Set the Rest Client configuration parameters.
      *
@@ -59,17 +53,40 @@ export declare class RestClientService {
      * The default authorization URI is '[API_END_POINT]/authorize'
      * @param username Username
      * @param password Password
+     * @deprecated Use `authenticate` method instead
      */
     authorize(username: string, password: string): Observable<any>;
+    /**
+     * Request an authentication token
+     * The default authentication URI is '[API_END_POINT]/authenticate'
+     * @param username Username
+     * @param password Password
+     */
+    authenticate(username: string, password: string): Observable<any>;
     /** Validate the Authentication token against the API */
     validateToken(url: string): Observable<any>;
-    /** Removes authorization token */
+    /**
+     * Removes authorization token
+     * @param url a url to report to
+     * @deprecated use `deauthenticate` method instead
+     */
     deauthorize(url: string): Observable<any>;
-    /** Check if the client is already Authenticate  */
+    /**
+     * Removes authorization token and reports logout to the server
+     * @param url a url to report to
+     */
+    deauthenticate(url: string): Observable<any>;
+    /**
+     * Check if the client is already authenticated
+     * @deprecated use `isAuthenticated` method instead
+     */
     isAuthorized(): boolean;
+    /**
+     * Check if the client is already authenticated
+     */
+    isAuthenticated(): boolean;
     /** Cancel all pending requests */
     cancelPendingRequests(): void;
-    cached(invalidate?: boolean): this;
     /**
      * Set the request mode to SECURED for the next request.
      *
@@ -130,6 +147,6 @@ export declare class RestClientService {
     private buildHeaders;
     /** Raw request method */
     protected request(method: HttpMethod, url: string, data?: any, responseType?: string, httpOptions?: IHttpOptions): Observable<any>;
-    static ɵfac: i0.ɵɵFactoryDef<RestClientService, [null, null, null, null, { optional: true; }]>;
+    static ɵfac: i0.ɵɵFactoryDef<RestClientService, [null, null, null, { optional: true; }]>;
     static ɵprov: i0.ɵɵInjectableDef<RestClientService>;
 }
