@@ -1,15 +1,25 @@
 {
   "name": "ngx-rest",
-  "version": "2.2.0",
-  "private": true,
+  "version": "3.0.0",
   "license": "MIT",
   "author": "Evgeny Gushchin",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/latenal/ngx-rest"
   },
+  "bugs": {
+    "url": "https://gitlab.com/latenal/ngx-rest/issues"
+  },
+  "scripts": {
+    "start": "ng serve",
+    "build": "ng build ngx-rest --prod",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  "private": true,
   "peerDependencies": {
-    "ngx-cookie": "^4.1.2",
-    "date-fns": "^2.7.0"
+    "date-fns": "^2.16.1",
+    "ngx-cookie": "^5.0.0"
   }
 }

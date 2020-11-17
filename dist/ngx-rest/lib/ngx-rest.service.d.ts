@@ -5,7 +5,6 @@ import { Observable, Subject } from 'rxjs';
 import { IHttpOptions } from './http-options.interface';
 import { HttpMethod } from './http-method.enum';
 import { RestServiceConfig } from './ngx-rest.config';
-import * as i0 from "@angular/core";
 export declare class RestClientService {
     private http;
     private cookies;
@@ -156,6 +155,4 @@ export declare class RestClientService {
     private buildHeaders;
     /** Raw request method */
     protected request(method: HttpMethod, url: string, data?: any, responseType?: string, httpOptions?: IHttpOptions): Observable<any>;
-    static ɵfac: i0.ɵɵFactoryDef<RestClientService, [null, null, null, { optional: true; }]>;
-    static ɵprov: i0.ɵɵInjectableDef<RestClientService>;
 }

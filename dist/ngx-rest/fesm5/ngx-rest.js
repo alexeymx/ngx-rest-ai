@@ -1,12 +1,12 @@
-import { __assign } from 'tslib';
-import { ɵɵinject, ɵɵdefineInjectable, ɵsetClassMetadata, Injectable, Optional, ɵɵdefineNgModule, ɵɵdefineInjector, ɵɵsetNgModuleScope, NgModule } from '@angular/core';
+import { __assign, __decorate, __param } from 'tslib';
+import { Injectable, Optional, ɵɵdefineInjectable, ɵɵinject, NgModule } from '@angular/core';
 import { HttpRequest, HttpHeaders, HttpEventType, HttpClient, HttpParams, HttpClientModule } from '@angular/common/http';
 import { map, filter, distinctUntilChanged, tap, takeUntil, delay, catchError } from 'rxjs/operators';
 import { isNullOrUndefined, isUndefined } from 'util';
+import { Router, RouterModule } from '@angular/router';
+import { CookieService, CookieModule } from 'ngx-cookie';
 import { Subject, throwError } from 'rxjs';
 import { fromUnixTime, isAfter } from 'date-fns';
-import { CookieService, CookieModule } from 'ngx-cookie';
-import { Router, RouterModule } from '@angular/router';
 
 /**
  * FileUpload request state enum
@@ -114,13 +114,14 @@ var FileUpload = /** @class */ (function () {
     FileUpload.prototype.put = function (url, files, options) {
         return this.upload('put', url, files, options);
     };
-    /** @nocollapse */ FileUpload.ɵfac = function FileUpload_Factory(t) { return new (t || FileUpload)(ɵɵinject(HttpClient)); };
-    /** @nocollapse */ FileUpload.ɵprov = ɵɵdefineInjectable({ token: FileUpload, factory: FileUpload.ɵfac });
+    FileUpload.ctorParameters = function () { return [
+        { type: HttpClient }
+    ]; };
+    FileUpload = __decorate([
+        Injectable()
+    ], FileUpload);
     return FileUpload;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FileUpload, [{
-        type: Injectable
-    }], function () { return [{ type: HttpClient }]; }, null); })();
 
 /**
  * FileDownload request state enum
@@ -138,6 +139,7 @@ var FileDownload = /** @class */ (function () {
     function FileDownload(http) {
         this.http = http;
     }
+    FileDownload_1 = FileDownload;
     /**
      * Convert bytes size to human readable format
      */
@@ -202,7 +204,7 @@ var FileDownload = /** @class */ (function () {
                 case HttpEventType.Response:
                     if (result.state !== FileDownloadState.completed) {
                         result = __assign(__assign({}, result), { state: FileDownloadState.completed });
-                        FileDownload.blobSave(saveAs, event.body);
+                        FileDownload_1.blobSave(saveAs, event.body);
                     }
                     break;
             }
@@ -230,13 +232,15 @@ var FileDownload = /** @class */ (function () {
         if (options === void 0) { options = {}; }
         return this.download('put', url, saveAs, options);
     };
-    /** @nocollapse */ FileDownload.ɵfac = function FileDownload_Factory(t) { return new (t || FileDownload)(ɵɵinject(HttpClient)); };
-    /** @nocollapse */ FileDownload.ɵprov = ɵɵdefineInjectable({ token: FileDownload, factory: FileDownload.ɵfac });
+    var FileDownload_1;
+    FileDownload.ctorParameters = function () { return [
+        { type: HttpClient }
+    ]; };
+    FileDownload = FileDownload_1 = __decorate([
+        Injectable()
+    ], FileDownload);
     return FileDownload;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FileDownload, [{
-        type: Injectable
-    }], function () { return [{ type: HttpClient }]; }, null); })();
 
 var TypeTokenStorage;
 (function (TypeTokenStorage) {
@@ -647,60 +651,52 @@ var RestClientService = /** @class */ (function () {
             return throwError(err);
         }));
     };
-    /** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(ɵɵinject(HttpClient), ɵɵinject(CookieService), ɵɵinject(Router), ɵɵinject(RestServiceConfig, 8)); };
-    /** @nocollapse */ RestClientService.ɵprov = ɵɵdefineInjectable({ token: RestClientService, factory: RestClientService.ɵfac, providedIn: 'root' });
+    RestClientService.ctorParameters = function () { return [
+        { type: HttpClient },
+        { type: CookieService },
+        { type: Router },
+        { type: RestServiceConfig, decorators: [{ type: Optional }] }
+    ]; };
+    RestClientService.ɵprov = ɵɵdefineInjectable({ factory: function RestClientService_Factory() { return new RestClientService(ɵɵinject(HttpClient), ɵɵinject(CookieService), ɵɵinject(Router), ɵɵinject(RestServiceConfig, 8)); }, token: RestClientService, providedIn: "root" });
+    RestClientService = __decorate([
+        Injectable({
+            providedIn: 'root'
+        }),
+        __param(3, Optional())
+    ], RestClientService);
     return RestClientService;
 }());
-/*@__PURE__*/ (function () { ɵsetClassMetadata(RestClientService, [{
-        type: Injectable,
-        args: [{
-                providedIn: 'root'
-            }]
-    }], function () { return [{ type: HttpClient }, { type: CookieService }, { type: Router }, { type: RestServiceConfig, decorators: [{
-                type: Optional
-            }] }]; }, null); })();
 
 var NgxRestModule = /** @class */ (function () {
     function NgxRestModule() {
     }
+    NgxRestModule_1 = NgxRestModule;
     NgxRestModule.forRoot = function (config) {
         return {
-            ngModule: NgxRestModule,
+            ngModule: NgxRestModule_1,
             providers: [
                 { provide: RestServiceConfig, useValue: config }
             ]
         };
     };
-    /** @nocollapse */ NgxRestModule.ɵmod = ɵɵdefineNgModule({ type: NgxRestModule });
-    /** @nocollapse */ NgxRestModule.ɵinj = ɵɵdefineInjector({ factory: function NgxRestModule_Factory(t) { return new (t || NgxRestModule)(); }, providers: [
-            HttpClient,
-            CookieService,
-            FileDownload,
-            FileUpload,
-            RouterModule
-        ], imports: [[
+    var NgxRestModule_1;
+    NgxRestModule = NgxRestModule_1 = __decorate([
+        NgModule({
+            imports: [
                 HttpClientModule,
                 CookieModule.forRoot()
-            ]] });
+            ],
+            providers: [
+                HttpClient,
+                CookieService,
+                FileDownload,
+                FileUpload,
+                RouterModule
+            ]
+        })
+    ], NgxRestModule);
     return NgxRestModule;
 }());
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && ɵɵsetNgModuleScope(NgxRestModule, { imports: [HttpClientModule, CookieModule] }); })();
-/*@__PURE__*/ (function () { ɵsetClassMetadata(NgxRestModule, [{
-        type: NgModule,
-        args: [{
-                imports: [
-                    HttpClientModule,
-                    CookieModule.forRoot()
-                ],
-                providers: [
-                    HttpClient,
-                    CookieService,
-                    FileDownload,
-                    FileUpload,
-                    RouterModule
-                ]
-            }]
-    }], null, null); })();
 
 /*
  * Public API Surface of ngx-rest

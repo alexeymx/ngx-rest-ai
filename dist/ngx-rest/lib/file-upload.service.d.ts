@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as i0 from "@angular/core";
 /**
  * FileUpload request options structure
  */
@@ -49,6 +48,4 @@ export declare class FileUpload {
      * Upload the files using PUT HTTP method
      */
     put(url: string, files: FileList, options?: IUploadOptions): Observable<any>;
-    static ɵfac: i0.ɵɵFactoryDef<FileUpload, never>;
-    static ɵprov: i0.ɵɵInjectableDef<FileUpload>;
 }

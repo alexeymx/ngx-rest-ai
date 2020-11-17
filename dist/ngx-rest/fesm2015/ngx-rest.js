@@ -1,11 +1,12 @@
-import { ɵɵinject, ɵɵdefineInjectable, ɵsetClassMetadata, Injectable, Optional, ɵɵdefineNgModule, ɵɵdefineInjector, ɵɵsetNgModuleScope, NgModule } from '@angular/core';
+import { __decorate, __param } from 'tslib';
+import { Injectable, Optional, ɵɵdefineInjectable, ɵɵinject, NgModule } from '@angular/core';
 import { HttpRequest, HttpHeaders, HttpEventType, HttpClient, HttpParams, HttpClientModule } from '@angular/common/http';
 import { map, filter, distinctUntilChanged, tap, takeUntil, delay, catchError } from 'rxjs/operators';
 import { isNullOrUndefined, isUndefined } from 'util';
+import { Router, RouterModule } from '@angular/router';
+import { CookieService, CookieModule } from 'ngx-cookie';
 import { Subject, throwError } from 'rxjs';
 import { fromUnixTime, isAfter } from 'date-fns';
-import { CookieService, CookieModule } from 'ngx-cookie';
-import { Router, RouterModule } from '@angular/router';
 
 /**
  * FileUpload request state enum
@@ -16,7 +17,7 @@ var FileUploadState;
     FileUploadState["inProgress"] = "inProgress";
     FileUploadState["completed"] = "completed";
 })(FileUploadState || (FileUploadState = {}));
-class FileUpload {
+let FileUpload = class FileUpload {
     /**
      * Service class constructor
      */
@@ -113,13 +114,15 @@ class FileUpload {
     put(url, files, options) {
         return this.upload('put', url, files, options);
     }
-}
-/** @nocollapse */ FileUpload.ɵfac = function FileUpload_Factory(t) { return new (t || FileUpload)(ɵɵinject(HttpClient)); };
-/** @nocollapse */ FileUpload.ɵprov = ɵɵdefineInjectable({ token: FileUpload, factory: FileUpload.ɵfac });
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FileUpload, [{
-        type: Injectable
-    }], function () { return [{ type: HttpClient }]; }, null); })();
+};
+FileUpload.ctorParameters = () => [
+    { type: HttpClient }
+];
+FileUpload = __decorate([
+    Injectable()
+], FileUpload);
 
+var FileDownload_1;
 /**
  * FileDownload request state enum
  */
@@ -129,7 +132,7 @@ var FileDownloadState;
     FileDownloadState["inProgress"] = "inProgress";
     FileDownloadState["completed"] = "completed";
 })(FileDownloadState || (FileDownloadState = {}));
-class FileDownload {
+let FileDownload = FileDownload_1 = class FileDownload {
     /**
      * Service class constructor
      */
@@ -199,7 +202,7 @@ class FileDownload {
                 case HttpEventType.Response:
                     if (result.state !== FileDownloadState.completed) {
                         result = Object.assign(Object.assign({}, result), { state: FileDownloadState.completed });
-                        FileDownload.blobSave(saveAs, event.body);
+                        FileDownload_1.blobSave(saveAs, event.body);
                     }
                     break;
             }
@@ -224,12 +227,13 @@ class FileDownload {
     put(url, saveAs, options = {}) {
         return this.download('put', url, saveAs, options);
     }
-}
-/** @nocollapse */ FileDownload.ɵfac = function FileDownload_Factory(t) { return new (t || FileDownload)(ɵɵinject(HttpClient)); };
-/** @nocollapse */ FileDownload.ɵprov = ɵɵdefineInjectable({ token: FileDownload, factory: FileDownload.ɵfac });
-/*@__PURE__*/ (function () { ɵsetClassMetadata(FileDownload, [{
-        type: Injectable
-    }], function () { return [{ type: HttpClient }]; }, null); })();
+};
+FileDownload.ctorParameters = () => [
+    { type: HttpClient }
+];
+FileDownload = FileDownload_1 = __decorate([
+    Injectable()
+], FileDownload);
 
 var TypeTokenStorage;
 (function (TypeTokenStorage) {
@@ -283,7 +287,7 @@ class JwtHelper {
     }
 }
 
-class RestClientService {
+let RestClientService = class RestClientService {
     constructor(http, cookies, router, config) {
         this.http = http;
         this.cookies = cookies;
@@ -622,56 +626,47 @@ class RestClientService {
             return throwError(err);
         }));
     }
-}
-/** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(ɵɵinject(HttpClient), ɵɵinject(CookieService), ɵɵinject(Router), ɵɵinject(RestServiceConfig, 8)); };
-/** @nocollapse */ RestClientService.ɵprov = ɵɵdefineInjectable({ token: RestClientService, factory: RestClientService.ɵfac, providedIn: 'root' });
-/*@__PURE__*/ (function () { ɵsetClassMetadata(RestClientService, [{
-        type: Injectable,
-        args: [{
-                providedIn: 'root'
-            }]
-    }], function () { return [{ type: HttpClient }, { type: CookieService }, { type: Router }, { type: RestServiceConfig, decorators: [{
-                type: Optional
-            }] }]; }, null); })();
+};
+RestClientService.ctorParameters = () => [
+    { type: HttpClient },
+    { type: CookieService },
+    { type: Router },
+    { type: RestServiceConfig, decorators: [{ type: Optional }] }
+];
+RestClientService.ɵprov = ɵɵdefineInjectable({ factory: function RestClientService_Factory() { return new RestClientService(ɵɵinject(HttpClient), ɵɵinject(CookieService), ɵɵinject(Router), ɵɵinject(RestServiceConfig, 8)); }, token: RestClientService, providedIn: "root" });
+RestClientService = __decorate([
+    Injectable({
+        providedIn: 'root'
+    }),
+    __param(3, Optional())
+], RestClientService);
 
-class NgxRestModule {
+var NgxRestModule_1;
+let NgxRestModule = NgxRestModule_1 = class NgxRestModule {
     static forRoot(config) {
         return {
-            ngModule: NgxRestModule,
+            ngModule: NgxRestModule_1,
             providers: [
                 { provide: RestServiceConfig, useValue: config }
             ]
         };
     }
-}
-/** @nocollapse */ NgxRestModule.ɵmod = ɵɵdefineNgModule({ type: NgxRestModule });
-/** @nocollapse */ NgxRestModule.ɵinj = ɵɵdefineInjector({ factory: function NgxRestModule_Factory(t) { return new (t || NgxRestModule)(); }, providers: [
-        HttpClient,
-        CookieService,
-        FileDownload,
-        FileUpload,
-        RouterModule
-    ], imports: [[
+};
+NgxRestModule = NgxRestModule_1 = __decorate([
+    NgModule({
+        imports: [
             HttpClientModule,
             CookieModule.forRoot()
-        ]] });
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && ɵɵsetNgModuleScope(NgxRestModule, { imports: [HttpClientModule, CookieModule] }); })();
-/*@__PURE__*/ (function () { ɵsetClassMetadata(NgxRestModule, [{
-        type: NgModule,
-        args: [{
-                imports: [
-                    HttpClientModule,
-                    CookieModule.forRoot()
-                ],
-                providers: [
-                    HttpClient,
-                    CookieService,
-                    FileDownload,
-                    FileUpload,
-                    RouterModule
-                ]
-            }]
-    }], null, null); })();
+        ],
+        providers: [
+            HttpClient,
+            CookieService,
+            FileDownload,
+            FileUpload,
+            RouterModule
+        ]
+    })
+], NgxRestModule);
 
 /*
  * Public API Surface of ngx-rest

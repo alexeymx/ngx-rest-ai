@@ -1,22 +1,22 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common/http'), require('rxjs/operators'), require('util'), require('rxjs'), require('date-fns'), require('ngx-cookie'), require('@angular/router')) :
-    typeof define === 'function' && define.amd ? define('ngx-rest', ['exports', '@angular/core', '@angular/common/http', 'rxjs/operators', 'util', 'rxjs', 'date-fns', 'ngx-cookie', '@angular/router'], factory) :
-    (global = global || self, factory(global['ngx-rest'] = {}, global.ng.core, global.ng.common.http, global.rxjs.operators, global.util, global.rxjs, global.dateFns, global.ngxCookie, global.ng.router));
-}(this, (function (exports, core, http, operators, util, rxjs, dateFns, ngxCookie, router) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common/http'), require('rxjs/operators'), require('util'), require('@angular/router'), require('ngx-cookie'), require('rxjs'), require('date-fns')) :
+    typeof define === 'function' && define.amd ? define('ngx-rest', ['exports', '@angular/core', '@angular/common/http', 'rxjs/operators', 'util', '@angular/router', 'ngx-cookie', 'rxjs', 'date-fns'], factory) :
+    (global = global || self, factory(global['ngx-rest'] = {}, global.ng.core, global.ng.common.http, global.rxjs.operators, global.util, global.ng.router, global.ngxCookie, global.rxjs, global.dateFns));
+}(this, (function (exports, core, http, operators, util, router, ngxCookie, rxjs, dateFns) { 'use strict';
 
     /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation. All rights reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-    this file except in compliance with the License. You may obtain a copy of the
-    License at http://www.apache.org/licenses/LICENSE-2.0
+    Copyright (c) Microsoft Corporation.
 
-    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-    MERCHANTABLITY OR NON-INFRINGEMENT.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
 
-    See the Apache Version 2.0 License for specific language governing permissions
-    and limitations under the License.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
     /* global Reflect, Promise */
 
@@ -72,10 +72,11 @@
     }
 
     function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
             function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     }
@@ -108,19 +109,25 @@
         }
     }
 
+    function __createBinding(o, m, k, k2) {
+        if (k2 === undefined) k2 = k;
+        o[k2] = m[k];
+    }
+
     function __exportStar(m, exports) {
-        for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+        for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) exports[p] = m[p];
     }
 
     function __values(o) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
         if (m) return m.call(o);
-        return {
+        if (o && typeof o.length === "number") return {
             next: function () {
                 if (o && i >= o.length) o = void 0;
                 return { value: o && o[i++], done: !o };
             }
         };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
     }
 
     function __read(o, n) {
@@ -199,6 +206,21 @@
 
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
+    }
+
+    function __classPrivateFieldGet(receiver, privateMap) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to get private field on non-instance");
+        }
+        return privateMap.get(receiver);
+    }
+
+    function __classPrivateFieldSet(receiver, privateMap, value) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to set private field on non-instance");
+        }
+        privateMap.set(receiver, value);
+        return value;
     }
 
     /**
@@ -307,13 +329,14 @@
         FileUpload.prototype.put = function (url, files, options) {
             return this.upload('put', url, files, options);
         };
-        /** @nocollapse */ FileUpload.ɵfac = function FileUpload_Factory(t) { return new (t || FileUpload)(core.ɵɵinject(http.HttpClient)); };
-        /** @nocollapse */ FileUpload.ɵprov = core.ɵɵdefineInjectable({ token: FileUpload, factory: FileUpload.ɵfac });
+        FileUpload.ctorParameters = function () { return [
+            { type: http.HttpClient }
+        ]; };
+        FileUpload = __decorate([
+            core.Injectable()
+        ], FileUpload);
         return FileUpload;
     }());
-    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(FileUpload, [{
-            type: core.Injectable
-        }], function () { return [{ type: http.HttpClient }]; }, null); })();
 
     /**
      * FileDownload request state enum
@@ -331,6 +354,7 @@
         function FileDownload(http) {
             this.http = http;
         }
+        FileDownload_1 = FileDownload;
         /**
          * Convert bytes size to human readable format
          */
@@ -395,7 +419,7 @@
                     case http.HttpEventType.Response:
                         if (result.state !== exports.FileDownloadState.completed) {
                             result = __assign(__assign({}, result), { state: exports.FileDownloadState.completed });
-                            FileDownload.blobSave(saveAs, event.body);
+                            FileDownload_1.blobSave(saveAs, event.body);
                         }
                         break;
                 }
@@ -423,13 +447,15 @@
             if (options === void 0) { options = {}; }
             return this.download('put', url, saveAs, options);
         };
-        /** @nocollapse */ FileDownload.ɵfac = function FileDownload_Factory(t) { return new (t || FileDownload)(core.ɵɵinject(http.HttpClient)); };
-        /** @nocollapse */ FileDownload.ɵprov = core.ɵɵdefineInjectable({ token: FileDownload, factory: FileDownload.ɵfac });
+        var FileDownload_1;
+        FileDownload.ctorParameters = function () { return [
+            { type: http.HttpClient }
+        ]; };
+        FileDownload = FileDownload_1 = __decorate([
+            core.Injectable()
+        ], FileDownload);
         return FileDownload;
     }());
-    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(FileDownload, [{
-            type: core.Injectable
-        }], function () { return [{ type: http.HttpClient }]; }, null); })();
 
 
     (function (TypeTokenStorage) {
@@ -840,60 +866,52 @@
                 return rxjs.throwError(err);
             }));
         };
-        /** @nocollapse */ RestClientService.ɵfac = function RestClientService_Factory(t) { return new (t || RestClientService)(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); };
-        /** @nocollapse */ RestClientService.ɵprov = core.ɵɵdefineInjectable({ token: RestClientService, factory: RestClientService.ɵfac, providedIn: 'root' });
+        RestClientService.ctorParameters = function () { return [
+            { type: http.HttpClient },
+            { type: ngxCookie.CookieService },
+            { type: router.Router },
+            { type: RestServiceConfig, decorators: [{ type: core.Optional }] }
+        ]; };
+        RestClientService.ɵprov = core.ɵɵdefineInjectable({ factory: function RestClientService_Factory() { return new RestClientService(core.ɵɵinject(http.HttpClient), core.ɵɵinject(ngxCookie.CookieService), core.ɵɵinject(router.Router), core.ɵɵinject(RestServiceConfig, 8)); }, token: RestClientService, providedIn: "root" });
+        RestClientService = __decorate([
+            core.Injectable({
+                providedIn: 'root'
+            }),
+            __param(3, core.Optional())
+        ], RestClientService);
         return RestClientService;
     }());
-    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(RestClientService, [{
-            type: core.Injectable,
-            args: [{
-                    providedIn: 'root'
-                }]
-        }], function () { return [{ type: http.HttpClient }, { type: ngxCookie.CookieService }, { type: router.Router }, { type: RestServiceConfig, decorators: [{
-                    type: core.Optional
-                }] }]; }, null); })();
 
     var NgxRestModule = /** @class */ (function () {
         function NgxRestModule() {
         }
+        NgxRestModule_1 = NgxRestModule;
         NgxRestModule.forRoot = function (config) {
             return {
-                ngModule: NgxRestModule,
+                ngModule: NgxRestModule_1,
                 providers: [
                     { provide: RestServiceConfig, useValue: config }
                 ]
             };
         };
-        /** @nocollapse */ NgxRestModule.ɵmod = core.ɵɵdefineNgModule({ type: NgxRestModule });
-        /** @nocollapse */ NgxRestModule.ɵinj = core.ɵɵdefineInjector({ factory: function NgxRestModule_Factory(t) { return new (t || NgxRestModule)(); }, providers: [
-                http.HttpClient,
-                ngxCookie.CookieService,
-                FileDownload,
-                FileUpload,
-                router.RouterModule
-            ], imports: [[
+        var NgxRestModule_1;
+        NgxRestModule = NgxRestModule_1 = __decorate([
+            core.NgModule({
+                imports: [
                     http.HttpClientModule,
                     ngxCookie.CookieModule.forRoot()
-                ]] });
+                ],
+                providers: [
+                    http.HttpClient,
+                    ngxCookie.CookieService,
+                    FileDownload,
+                    FileUpload,
+                    router.RouterModule
+                ]
+            })
+        ], NgxRestModule);
         return NgxRestModule;
     }());
-    (function () { (typeof ngJitMode === "undefined" || ngJitMode) && core.ɵɵsetNgModuleScope(NgxRestModule, { imports: [http.HttpClientModule, ngxCookie.CookieModule] }); })();
-    /*@__PURE__*/ (function () { core.ɵsetClassMetadata(NgxRestModule, [{
-            type: core.NgModule,
-            args: [{
-                    imports: [
-                        http.HttpClientModule,
-                        ngxCookie.CookieModule.forRoot()
-                    ],
-                    providers: [
-                        http.HttpClient,
-                        ngxCookie.CookieService,
-                        FileDownload,
-                        FileUpload,
-                        router.RouterModule
-                    ]
-                }]
-        }], null, null); })();
 
     exports.FileDownload = FileDownload;
     exports.FileUpload = FileUpload;
