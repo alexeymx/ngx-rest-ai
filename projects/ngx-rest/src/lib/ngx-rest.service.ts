@@ -279,6 +279,18 @@ export class RestClientService {
   }
 
   /**
+   * API request using PATCH method
+   *
+   * @param url
+   * @param data
+   * @param responseType
+   * @param httpOptions
+   */
+  public patch(url: string, data?: {}, responseType?: string, httpOptions: IHttpOptions = {}): Observable<any> {
+    return this.request(HttpMethod.Patch, url, data, responseType, httpOptions);
+  }
+
+  /**
    * API request using DELETE method
    *
    * @param url
