@@ -245,7 +245,8 @@ var HttpMethod;
     HttpMethod["Get"] = "get";
     HttpMethod["Post"] = "post";
     HttpMethod["Put"] = "put";
-    HttpMethod["Delete"] = "Delete";
+    HttpMethod["Delete"] = "selete";
+    HttpMethod["Patch"] = "patch";
 })(HttpMethod || (HttpMethod = {}));
 
 class JwtHelper {
@@ -502,6 +503,17 @@ class RestClientService {
      */
     put(url, data, responseType, httpOptions = {}) {
         return this.request(HttpMethod.Put, url, data, responseType, httpOptions);
+    }
+    /**
+     * API request using PATCH method
+     *
+     * @param url
+     * @param data
+     * @param responseType
+     * @param httpOptions
+     */
+    patch(url, data, responseType, httpOptions = {}) {
+        return this.request(HttpMethod.Patch, url, data, responseType, httpOptions);
     }
     /**
      * API request using DELETE method

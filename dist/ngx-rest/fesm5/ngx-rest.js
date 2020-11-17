@@ -255,7 +255,8 @@ var HttpMethod;
     HttpMethod["Get"] = "get";
     HttpMethod["Post"] = "post";
     HttpMethod["Put"] = "put";
-    HttpMethod["Delete"] = "Delete";
+    HttpMethod["Delete"] = "selete";
+    HttpMethod["Patch"] = "patch";
 })(HttpMethod || (HttpMethod = {}));
 
 var JwtHelper = /** @class */ (function () {
@@ -524,6 +525,18 @@ var RestClientService = /** @class */ (function () {
     RestClientService.prototype.put = function (url, data, responseType, httpOptions) {
         if (httpOptions === void 0) { httpOptions = {}; }
         return this.request(HttpMethod.Put, url, data, responseType, httpOptions);
+    };
+    /**
+     * API request using PATCH method
+     *
+     * @param url
+     * @param data
+     * @param responseType
+     * @param httpOptions
+     */
+    RestClientService.prototype.patch = function (url, data, responseType, httpOptions) {
+        if (httpOptions === void 0) { httpOptions = {}; }
+        return this.request(HttpMethod.Patch, url, data, responseType, httpOptions);
     };
     /**
      * API request using DELETE method

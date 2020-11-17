@@ -127,6 +127,15 @@ export declare class RestClientService {
      */
     put(url: string, data?: {}, responseType?: string, httpOptions?: IHttpOptions): Observable<any>;
     /**
+     * API request using PATCH method
+     *
+     * @param url
+     * @param data
+     * @param responseType
+     * @param httpOptions
+     */
+    patch(url: string, data?: {}, responseType?: string, httpOptions?: IHttpOptions): Observable<any>;
+    /**
      * API request using DELETE method
      *
      * @param url
