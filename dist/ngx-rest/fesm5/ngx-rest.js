@@ -259,7 +259,7 @@ var HttpMethod;
     HttpMethod["Get"] = "get";
     HttpMethod["Post"] = "post";
     HttpMethod["Put"] = "put";
-    HttpMethod["Delete"] = "selete";
+    HttpMethod["Delete"] = "delete";
     HttpMethod["Patch"] = "patch";
 })(HttpMethod || (HttpMethod = {}));
 
